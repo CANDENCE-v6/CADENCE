@@ -1,0 +1,25 @@
+{
+  "experiment": "E8_ood_causal_generalization",
+  "train_mechanism": "covariate_shift",
+  "n_train": 420,
+  "test_id": {
+    "mechanism": "covariate_shift",
+    "mae": 0.004065981933048746,
+    "r2": -2231848224.783639,
+    "n": 135
+  },
+  "test_ood": {
+    "mechanism": "concept_shift",
+    "mae": 0.5512609502740837,
+    "r2": -16.866960911924593,
+    "n": 135
+  },
+  "ood_mae_gap": 0.547194968341035,
+  "config": {
+    "config": "configs/default.yaml",
+    "train_drifts": 140,
+    "test_drifts": 45,
+    "joint_epochs": 25,
+    "out": "experiments/exp_e8_ood_causal.json"
+  }
+}

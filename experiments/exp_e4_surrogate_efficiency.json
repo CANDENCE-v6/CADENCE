@@ -1,0 +1,65 @@
+{
+  "experiment": "E4_surrogate_efficiency",
+  "pool_size": 552,
+  "candidates_per_drift": 3,
+  "joint_epochs": 25,
+  "rows": [
+    {
+      "budget": 10,
+      "val_mae": 0.19000117919642667,
+      "val_r2": 0.00972572649253134,
+      "val_mse": 0.07116665960938917,
+      "n_val": 2
+    },
+    {
+      "budget": 25,
+      "val_mae": 0.07469110324047873,
+      "val_r2": 0.7535347737005973,
+      "val_mse": 0.013975066546117887,
+      "n_val": 5
+    },
+    {
+      "budget": 50,
+      "val_mae": 0.04373884659813172,
+      "val_r2": 0.8641266131905475,
+      "val_mse": 0.008044887470373397,
+      "n_val": 10
+    },
+    {
+      "budget": 100,
+      "val_mae": 0.019789435357821218,
+      "val_r2": 0.9145853833959146,
+      "val_mse": 0.001436211290774736,
+      "n_val": 20
+    },
+    {
+      "budget": 250,
+      "val_mae": 0.04209825849467052,
+      "val_r2": 0.9138129194859415,
+      "val_mse": 0.0048144992571906185,
+      "n_val": 50
+    },
+    {
+      "budget": 500,
+      "val_mae": 0.026731932998913684,
+      "val_r2": 0.9397258800299196,
+      "val_mse": 0.0030004099271920383,
+      "n_val": 100
+    }
+  ],
+  "config": {
+    "config": "configs/default.yaml",
+    "budgets": [
+      10,
+      25,
+      50,
+      100,
+      250,
+      500
+    ],
+    "pool": 550,
+    "candidates_per_drift": 3,
+    "joint_epochs": 25,
+    "out": "experiments/exp_e4_surrogate_efficiency.json"
+  }
+}
