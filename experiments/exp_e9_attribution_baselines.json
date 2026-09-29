@@ -1,0 +1,1540 @@
+{
+  "experiment": "E9_attribution_baselines",
+  "seeds": 5,
+  "aggregates": {
+    "hard": {
+      "psi": {
+        "n": 10,
+        "top1": [
+          0.0,
+          0.0
+        ],
+        "mrr": [
+          0.09722222222222222,
+          0.013888888888888888
+        ],
+        "auroc": [
+          0.6724137931034483,
+          0.051724137931034475
+        ]
+      },
+      "grad": {
+        "n": 10,
+        "top1": [
+          0.0,
+          0.0
+        ],
+        "mrr": [
+          0.26785714285714285,
+          0.23214285714285715
+        ],
+        "auroc": [
+          0.5172413793103449,
+          0.4482758620689655
+        ]
+      },
+      "perm": {
+        "n": 10,
+        "top1": [
+          0.5,
+          0.5
+        ],
+        "mrr": [
+          0.5170114942528736,
+          0.48298866987255606
+        ],
+        "auroc": [
+          0.29310344827586204,
+          0.2590800518105081
+        ]
+      },
+      "cdag_structural": {
+        "n": 10,
+        "top1": [
+          0.0,
+          0.0
+        ],
+        "mrr": [
+          0.14750000000000002,
+          0.10299676370320252
+        ],
+        "auroc": [
+          0.5448275862068965,
+          0.3894567697516
+        ]
+      },
+      "gnn_learned": {
+        "n": 10,
+        "top1": [
+          0.3,
+          0.458257569495584
+        ],
+        "mrr": [
+          0.45,
+          0.36055512754639896
+        ],
+        "auroc": [
+          0.9103448275862069,
+          0.0601227440488369
+        ]
+      }
+    },
+    "easy": {
+      "psi": {
+        "n": 15,
+        "top1": [
+          1.0,
+          0.0
+        ],
+        "mrr": [
+          1.0,
+          0.0
+        ],
+        "auroc": [
+          1.0,
+          0.0
+        ]
+      },
+      "grad": {
+        "n": 15,
+        "top1": [
+          0.0,
+          0.0
+        ],
+        "mrr": [
+          0.2777777777777778,
+          0.15713484026367724
+        ],
+        "auroc": [
+          0.8735632183908046,
+          0.06502131321255612
+        ]
+      },
+      "perm": {
+        "n": 15,
+        "top1": [
+          0.0,
+          0.0
+        ],
+        "mrr": [
+          0.05563218390804598,
+          0.015607372692207336
+        ],
+        "auroc": [
+          0.37471264367816093,
+          0.245810449568745
+        ]
+      },
+      "cdag_structural": {
+        "n": 15,
+        "top1": [
+          0.3333333333333333,
+          0.4714045207910317
+        ],
+        "mrr": [
+          0.4722222222222222,
+          0.37474271008977894
+        ],
+        "auroc": [
+          0.9080459770114943,
+          0.0708553333674595
+        ]
+      },
+      "gnn_learned": {
+        "n": 15,
+        "top1": [
+          0.6666666666666666,
+          0.4714045207910317
+        ],
+        "mrr": [
+          0.8333333333333334,
+          0.23570226039551584
+        ],
+        "auroc": [
+          0.9885057471264368,
+          0.016255328303139003
+        ]
+      }
+    }
+  },
+  "aggregate_all": {
+    "psi": {
+      "n": 25,
+      "top1": [
+        0.6,
+        0.4898979485566356
+      ],
+      "mrr": [
+        0.6388888888888888,
+        0.44235620527543074
+      ],
+      "auroc": [
+        0.8689655172413794,
+        0.16378402878672987
+      ]
+    },
+    "grad": {
+      "n": 25,
+      "top1": [
+        0.0,
+        0.0
+      ],
+      "mrr": [
+        0.2738095238095238,
+        0.19077357737152503
+      ],
+      "auroc": [
+        0.7310344827586206,
+        0.33673256870989526
+      ]
+    },
+    "perm": {
+      "n": 25,
+      "top1": [
+        0.2,
+        0.4
+      ],
+      "mrr": [
+        0.240183908045977,
+        0.3801925623456368
+      ],
+      "auroc": [
+        0.34206896551724136,
+        0.25436405043672716
+      ]
+    },
+    "cdag_structural": {
+      "n": 25,
+      "top1": [
+        0.2,
+        0.4
+      ],
+      "mrr": [
+        0.3423333333333333,
+        0.3373563068593468
+      ],
+      "auroc": [
+        0.7627586206896553,
+        0.30878073291996727
+      ]
+    },
+    "gnn_learned": {
+      "n": 25,
+      "top1": [
+        0.52,
+        0.49959983987187184
+      ],
+      "mrr": [
+        0.68,
+        0.34727510708370674
+      ],
+      "auroc": [
+        0.9572413793103448,
+        0.05541326738372599
+      ]
+    }
+  },
+  "wilcoxon_gnn_greater_hard": {
+    "psi": {
+      "mrr": {
+        "p": 0.0009765625,
+        "n": 10
+      },
+      "auroc": {
+        "p": 0.0009765625,
+        "n": 10
+      }
+    },
+    "grad": {
+      "mrr": {
+        "p": 0.080078125,
+        "n": 10
+      },
+      "auroc": {
+        "p": 0.0322265625,
+        "n": 10
+      }
+    },
+    "perm": {
+      "mrr": {
+        "p": 0.4228515625,
+        "n": 10
+      },
+      "auroc": {
+        "p": 0.0009765625,
+        "n": 10
+      }
+    },
+    "cdag_structural": {
+      "mrr": {
+        "p": 0.1162109375,
+        "n": 10
+      },
+      "auroc": {
+        "p": 0.1162109375,
+        "n": 10
+      }
+    }
+  },
+  "rows": [
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5344827586206897
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5344827586206897
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "psi",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "perm",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 15,
+      "top1": 0,
+      "mrr": 0.06666666666666667,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 6,
+      "top1": 0,
+      "mrr": 0.16666666666666666,
+      "auroc": 0.8275862068965517
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "amount_multiplicative_gradual",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_additive_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_additive_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_additive_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.017241379310344807
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_additive_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_additive_abrupt",
+      "seed": 0,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_additive_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_additive_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_additive_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.017241379310344807
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_additive_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_additive_abrupt",
+      "seed": 1,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_additive_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_additive_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_additive_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 29,
+      "top1": 0,
+      "mrr": 0.034482758620689655,
+      "auroc": 0.06896551724137928
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_additive_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_additive_abrupt",
+      "seed": 2,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_additive_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_additive_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_additive_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.017241379310344807
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_additive_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_additive_abrupt",
+      "seed": 3,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_additive_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_additive_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_additive_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.017241379310344807
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_additive_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_additive_abrupt",
+      "seed": 4,
+      "subset": "easy",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_concept_shift",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 9,
+      "top1": 0,
+      "mrr": 0.1111111111111111,
+      "auroc": 0.7241379310344828
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_concept_shift",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_concept_shift",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 29,
+      "top1": 0,
+      "mrr": 0.034482758620689655,
+      "auroc": 0.051724137931034475
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_concept_shift",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 16,
+      "top1": 0,
+      "mrr": 0.0625,
+      "auroc": 0.48275862068965514
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_concept_shift",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_concept_shift",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 9,
+      "top1": 0,
+      "mrr": 0.1111111111111111,
+      "auroc": 0.7241379310344828
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_concept_shift",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_concept_shift",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.0
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_concept_shift",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_concept_shift",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_concept_shift",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 9,
+      "top1": 0,
+      "mrr": 0.1111111111111111,
+      "auroc": 0.7241379310344828
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_concept_shift",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_concept_shift",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 29,
+      "top1": 0,
+      "mrr": 0.034482758620689655,
+      "auroc": 0.051724137931034475
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_concept_shift",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_concept_shift",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_concept_shift",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 9,
+      "top1": 0,
+      "mrr": 0.1111111111111111,
+      "auroc": 0.7241379310344828
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_concept_shift",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_concept_shift",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.017241379310344807
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_concept_shift",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 16,
+      "top1": 0,
+      "mrr": 0.0625,
+      "auroc": 0.48275862068965514
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_concept_shift",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "psi",
+      "scenario": "v14_concept_shift",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 9,
+      "top1": 0,
+      "mrr": 0.1111111111111111,
+      "auroc": 0.7241379310344828
+    },
+    {
+      "scorer": "grad",
+      "scenario": "v14_concept_shift",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 2,
+      "top1": 0,
+      "mrr": 0.5,
+      "auroc": 0.9655172413793104
+    },
+    {
+      "scorer": "perm",
+      "scenario": "v14_concept_shift",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 29,
+      "top1": 0,
+      "mrr": 0.034482758620689655,
+      "auroc": 0.051724137931034475
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "v14_concept_shift",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 30,
+      "top1": 0,
+      "mrr": 0.03333333333333333,
+      "auroc": 0.0
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "v14_concept_shift",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "psi",
+      "scenario": "time_gradual",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 12,
+      "top1": 0,
+      "mrr": 0.08333333333333333,
+      "auroc": 0.6206896551724138
+    },
+    {
+      "scorer": "grad",
+      "scenario": "time_gradual",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 28,
+      "top1": 0,
+      "mrr": 0.03571428571428571,
+      "auroc": 0.06896551724137934
+    },
+    {
+      "scorer": "perm",
+      "scenario": "time_gradual",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "time_gradual",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "time_gradual",
+      "seed": 0,
+      "subset": "hard",
+      "rank": 5,
+      "top1": 0,
+      "mrr": 0.2,
+      "auroc": 0.8620689655172413
+    },
+    {
+      "scorer": "psi",
+      "scenario": "time_gradual",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 12,
+      "top1": 0,
+      "mrr": 0.08333333333333333,
+      "auroc": 0.6206896551724138
+    },
+    {
+      "scorer": "grad",
+      "scenario": "time_gradual",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 28,
+      "top1": 0,
+      "mrr": 0.03571428571428571,
+      "auroc": 0.06896551724137934
+    },
+    {
+      "scorer": "perm",
+      "scenario": "time_gradual",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "time_gradual",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "time_gradual",
+      "seed": 1,
+      "subset": "hard",
+      "rank": 5,
+      "top1": 0,
+      "mrr": 0.2,
+      "auroc": 0.8620689655172413
+    },
+    {
+      "scorer": "psi",
+      "scenario": "time_gradual",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 12,
+      "top1": 0,
+      "mrr": 0.08333333333333333,
+      "auroc": 0.6206896551724138
+    },
+    {
+      "scorer": "grad",
+      "scenario": "time_gradual",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 28,
+      "top1": 0,
+      "mrr": 0.03571428571428571,
+      "auroc": 0.06896551724137934
+    },
+    {
+      "scorer": "perm",
+      "scenario": "time_gradual",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "time_gradual",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "time_gradual",
+      "seed": 2,
+      "subset": "hard",
+      "rank": 5,
+      "top1": 0,
+      "mrr": 0.2,
+      "auroc": 0.8620689655172413
+    },
+    {
+      "scorer": "psi",
+      "scenario": "time_gradual",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 12,
+      "top1": 0,
+      "mrr": 0.08333333333333333,
+      "auroc": 0.6206896551724138
+    },
+    {
+      "scorer": "grad",
+      "scenario": "time_gradual",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 28,
+      "top1": 0,
+      "mrr": 0.03571428571428571,
+      "auroc": 0.06896551724137934
+    },
+    {
+      "scorer": "perm",
+      "scenario": "time_gradual",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "time_gradual",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "time_gradual",
+      "seed": 3,
+      "subset": "hard",
+      "rank": 5,
+      "top1": 0,
+      "mrr": 0.2,
+      "auroc": 0.8620689655172413
+    },
+    {
+      "scorer": "psi",
+      "scenario": "time_gradual",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 12,
+      "top1": 0,
+      "mrr": 0.08333333333333333,
+      "auroc": 0.6206896551724138
+    },
+    {
+      "scorer": "grad",
+      "scenario": "time_gradual",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 28,
+      "top1": 0,
+      "mrr": 0.03571428571428571,
+      "auroc": 0.06896551724137934
+    },
+    {
+      "scorer": "perm",
+      "scenario": "time_gradual",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 1,
+      "top1": 1,
+      "mrr": 1.0,
+      "auroc": 0.5517241379310345
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "time_gradual",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 4,
+      "top1": 0,
+      "mrr": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "gnn_learned",
+      "scenario": "time_gradual",
+      "seed": 4,
+      "subset": "hard",
+      "rank": 5,
+      "top1": 0,
+      "mrr": 0.2,
+      "auroc": 0.8620689655172413
+    }
+  ],
+  "config": {
+    "config": "configs/default.yaml",
+    "seeds": 5,
+    "window_size": 1024,
+    "windows_per_episode": 3,
+    "gnn_samples": 200,
+    "gnn_epochs": 20,
+    "out": "experiments/exp_e9_attribution_baselines.json"
+  }
+}
