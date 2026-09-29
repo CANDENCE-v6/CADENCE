@@ -1,0 +1,704 @@
+{
+  "experiment": "E2_ppo_necessity",
+  "sla": 0.8,
+  "scenarios": [
+    "contested_v14_partial_recoverable",
+    "contested_multi_feature_full_needed",
+    "contested_v14_tail_flip_unrecoverable"
+  ],
+  "seeds": 3,
+  "aggregate": {
+    "no_op": {
+      "mean_f1": 0.5635695421601574,
+      "mean_f1_std": 0.3662774035028886,
+      "total_gpu_hr": 0.0,
+      "sla_violations": 2.3333333333333335,
+      "mean_reward": -0.13666855576891793,
+      "n": 9
+    },
+    "always_partial": {
+      "mean_f1": 0.5899274964545634,
+      "mean_f1_std": 0.32950559342099744,
+      "total_gpu_hr": 1.7481860862142555e-08,
+      "sla_violations": 2.3333333333333335,
+      "mean_reward": -0.11747086056785006,
+      "n": 9
+    },
+    "always_full": {
+      "mean_f1": 0.6107495185195183,
+      "mean_f1_std": 0.3933486953473682,
+      "total_gpu_hr": 3.6770863565229763e-06,
+      "sla_violations": 2.0,
+      "mean_reward": -1.0578567033324808,
+      "n": 9
+    },
+    "greedy_rule": {
+      "mean_f1": 0.6113739023719484,
+      "mean_f1_std": 0.39246718068923087,
+      "total_gpu_hr": 3.2174505619576044e-06,
+      "sla_violations": 2.0,
+      "mean_reward": -0.7489181044381281,
+      "n": 9
+    },
+    "ppo": {
+      "mean_f1": 0.5882875917991972,
+      "mean_f1_std": 0.36426490956319585,
+      "total_gpu_hr": 1.231522739128373e-06,
+      "sla_violations": 2.2222222222222223,
+      "mean_reward": -0.4381836370176115,
+      "n": 9
+    }
+  },
+  "raw": {
+    "no_op": [
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 0,
+        "mean_reward": 0.11111111111111116,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 0,
+        "mean_reward": 0.11111111111111116,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 0,
+        "mean_reward": 0.11111111111111116,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 1,
+        "mean_reward": 0.25,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 1,
+        "mean_reward": 0.25,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 1,
+        "mean_reward": 0.25,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.051652418892184006,
+        "min_f1": 0.017699115044247787,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 6,
+        "mean_reward": -0.7705698033300382,
+        "actions": {
+          "0": 6,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.051003805096587924,
+        "min_f1": 0.01680672268907563,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 6,
+        "mean_reward": -0.7719847006505386,
+        "actions": {
+          "0": 6,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.052802988785978784,
+        "min_f1": 0.01652892561983471,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 6,
+        "mean_reward": -0.7707958312730182,
+        "actions": {
+          "0": 6,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 2
+      }
+    ],
+    "always_partial": [
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 0,
+        "mean_reward": 0.10671384401764125,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 0,
+        "mean_reward": 0.10671384401764125,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 0,
+        "mean_reward": 0.10671384401764125,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 1,
+        "mean_reward": 0.2456027329065301,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 1,
+        "mean_reward": 0.2456027329065301,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 1,
+        "mean_reward": 0.2456027329065301,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.13131816255027054,
+        "min_f1": 0.12048192771084337,
+        "total_gpu_hr": 3.933418693982075e-08,
+        "sla_violations": 6,
+        "mean_reward": -0.6922524264835895,
+        "actions": {
+          "0": 0,
+          "1": 6,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.12711482015357636,
+        "min_f1": 0.10256410256410256,
+        "total_gpu_hr": 3.933418693982075e-08,
+        "sla_violations": 6,
+        "mean_reward": -0.7129481073338764,
+        "actions": {
+          "0": 0,
+          "1": 6,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.13424781872055708,
+        "min_f1": 0.11009174311926606,
+        "total_gpu_hr": 3.933418693982075e-08,
+        "sla_violations": 6,
+        "mean_reward": -0.7089869420656987,
+        "actions": {
+          "0": 0,
+          "1": 6,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 2
+      }
+    ],
+    "always_full": [
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.8137979110399772,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.8137979110399772,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.8137979110399772,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.6749090221510884,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.6749090221510884,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.6749090221510884,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.05421326545303057,
+        "min_f1": 0.017699115044247787,
+        "total_gpu_hr": 8.273444302176696e-06,
+        "sla_violations": 6,
+        "mean_reward": -1.6860447770597087,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 6
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.053734252506631025,
+        "min_f1": 0.01680672268907563,
+        "total_gpu_hr": 8.273444302176696e-06,
+        "sla_violations": 6,
+        "mean_reward": -1.6857848837540865,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 6
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.05546481538266993,
+        "min_f1": 0.01639344262295082,
+        "total_gpu_hr": 8.273444302176696e-06,
+        "sla_violations": 6,
+        "mean_reward": -1.6827598696053363,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 6
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 2
+      }
+    ],
+    "greedy_rule": [
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 0,
+        "mean_reward": 0.11111111111111116,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 0,
+        "mean_reward": 0.11111111111111116,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 0,
+        "mean_reward": 0.11111111111111116,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.6749090221510884,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.6749090221510884,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.6749090221510884,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.0571113661620302,
+        "min_f1": 0.018691588785046728,
+        "total_gpu_hr": 8.273444302176696e-06,
+        "sla_violations": 6,
+        "mean_reward": -1.686382031207862,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 6
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.05358445025787825,
+        "min_f1": 0.01680672268907563,
+        "total_gpu_hr": 8.273444302176696e-06,
+        "sla_violations": 6,
+        "mean_reward": -1.6853994699280637,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 6
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.05833597159429452,
+        "min_f1": 0.01652892561983471,
+        "total_gpu_hr": 8.273444302176696e-06,
+        "sla_violations": 6,
+        "mean_reward": -1.6770877056872955,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 6
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 2
+      }
+    ],
+    "ppo": [
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.8137979110399772,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 0,
+        "mean_reward": 0.11111111111111116,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 0,
+        "mean_reward": 0.10671384401764125,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_v14_partial_recoverable",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.8888888888888888,
+        "min_f1": 0.8888888888888888,
+        "total_gpu_hr": 1.378907383696116e-06,
+        "sla_violations": 0,
+        "mean_reward": -0.6749090221510884,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 1
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 1,
+        "mean_reward": 0.25,
+        "actions": {
+          "0": 1,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.75,
+        "min_f1": 0.75,
+        "total_gpu_hr": 6.555697823303458e-09,
+        "sla_violations": 1,
+        "mean_reward": 0.2456027329065301,
+        "actions": {
+          "0": 0,
+          "1": 1,
+          "2": 0
+        },
+        "scenario": "contested_multi_feature_full_needed",
+        "seed": 2
+      },
+      {
+        "mean_f1": 0.05421326545303057,
+        "min_f1": 0.017699115044247787,
+        "total_gpu_hr": 8.273444302176696e-06,
+        "sla_violations": 6,
+        "mean_reward": -1.686382031207862,
+        "actions": {
+          "0": 0,
+          "1": 0,
+          "2": 6
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 0
+      },
+      {
+        "mean_f1": 0.051003805096587924,
+        "min_f1": 0.01680672268907563,
+        "total_gpu_hr": 0.0,
+        "sla_violations": 6,
+        "mean_reward": -0.7719847006505386,
+        "actions": {
+          "0": 6,
+          "1": 0,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 1
+      },
+      {
+        "mean_f1": 0.1338157000876016,
+        "min_f1": 0.11009174311926606,
+        "total_gpu_hr": 3.933418693982075e-08,
+        "sla_violations": 6,
+        "mean_reward": -0.7100067561443199,
+        "actions": {
+          "0": 0,
+          "1": 6,
+          "2": 0
+        },
+        "scenario": "contested_v14_tail_flip_unrecoverable",
+        "seed": 2
+      }
+    ]
+  },
+  "config": {
+    "config": "configs/default.yaml",
+    "seeds": 3,
+    "n_windows": 6,
+    "window_size": 1024,
+    "eval_window_size": 2048,
+    "sla": 0.8,
+    "out": "experiments/exp_e2_ppo_necessity.json"
+  },
+  "wilcoxon_ppo_vs_greedy_reward_p": 0.29317745956451147
+}
