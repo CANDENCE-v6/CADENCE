@@ -1,0 +1,15 @@
+{
+  "experiment": "E5_graph_scaling",
+  "n_windows": 12,
+  "notears_max_iter": 25,
+  "hardware": "RTX 4070 Laptop (PC+NOTEARS are CPU-bound)",
+  "rows": [
+    {"n_nodes": 30,  "median_s": 0.2981533500005753,  "peak_mem_mb": 0.6449575424194336},
+    {"n_nodes": 100, "median_s": 5.227699900002335,   "peak_mem_mb": 17.422858238220215},
+    {"n_nodes": 300, "median_s": 126.9052447999984,   "peak_mem_mb": 139.35902309417725},
+    {"n_nodes": 500, "median_s": null, "peak_mem_mb": null, "note": "exceeded a 10-min/build budget; not completed (superlinear growth)"}
+  ],
+  "empirical_scaling_exponent": 2.63,
+  "exponent_note": "log-log slope from n=30 (0.298s) to n=300 (126.9s): ~O(n^2.6); impractical beyond ~100 nodes (>5s) with the current PC+NOTEARS implementation.",
+  "config": {"node_counts": [30, 100, 300, 500], "n_windows": 12, "reps": 2, "notears_max_iter": 25}
+}

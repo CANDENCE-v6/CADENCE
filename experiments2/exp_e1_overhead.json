@@ -1,0 +1,38 @@
+{
+  "experiment": "E1_total_overhead",
+  "hardware": "RTX 4070 Laptop",
+  "window_size": 1024,
+  "component_times": {
+    "monitor_ms": 1.4867000027152244,
+    "cdag_ms": 374.0782000004401,
+    "gnn_ms": 4.92379999923287,
+    "surrogate_ms": 0.22589999935007654,
+    "policy_ms": 0.006599999323952943,
+    "partial_retrain_s": 0.1939505000009376,
+    "full_retrain_s": 0.3067410000003292
+  },
+  "overhead_per_window_ms": 380.72120000106224,
+  "action_profile": {
+    "n_windows": 10,
+    "n_partial": 4,
+    "n_full": 3
+  },
+  "C_cadence_s": 5.5032370000153605,
+  "C_reactive_full_s": 3.0822770000304445,
+  "net_compute_saved_s": -2.420959999984916,
+  "net_compute_saved_pct": -78.54453055195894,
+  "cadence_overhead_total_s": 3.8072120000106224,
+  "overhead_as_pct_of_cadence_budget": 69.18132001220366,
+  "retrain_only_saved_pct_reported_in_paper": 44.70823919844697,
+  "config": {
+    "config": "configs/default.yaml",
+    "window_size": 1024,
+    "reps": 25,
+    "finetune_epochs": 2,
+    "fullretrain_epochs": 5,
+    "n_windows": 10,
+    "n_partial": 4,
+    "n_full": 3,
+    "out": "experiments/exp_e1_overhead.json"
+  }
+}
