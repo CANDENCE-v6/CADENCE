@@ -30,7 +30,8 @@ jobs:
       - name: Install core + dev deps (no torch/PyG on CI — those are per-job)
         run: |
           python -m pip install --upgrade pip
-          pip install -e .[dev]
+          pip install "torch>=2.2,<2.6" --index-url https://download.pytorch.org/whl/cpu
+          pip install -e ".[dev,ml,gnn,causal]"
 
       - name: Ruff lint
         run: ruff check cadence tests
