@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from cadence.data.disjoint import make_disjoint_split
 
+from cadence.data.disjoint import make_disjoint_split
 from cadence.executor import (
     EscalationConfig,
     EscalationDecision,

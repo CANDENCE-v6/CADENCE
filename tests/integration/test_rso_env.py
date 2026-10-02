@@ -8,10 +8,10 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from benchmarks.synthetic_drift_gen import build_default_scenarios
-from cadence.adapters.neural import FraudNet, FraudNetConfig
 from stable_baselines3.common.env_checker import check_env
 
+from benchmarks.synthetic_drift_gen import build_default_scenarios
+from cadence.adapters.neural import FraudNet, FraudNetConfig
 from cadence.collector.drift_trigger import DriftTriggerConfig, PSITrigger
 from cadence.common.seeds import set_global_seed
 from cadence.rso.env import RetrainingSandboxEnv, SandboxConfig

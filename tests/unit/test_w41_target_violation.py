@@ -97,10 +97,10 @@ def test_lagrangian_dynamics_reach_equilibrium_under_measured_violations() -> No
     lam_fixed = simulate(cfg.target_violation)
     lam_strict = simulate(0.0)
     # Under the W-41 default, lambda must not be pinned at the cap.
-    assert lam_fixed < cfg.lambda_max * 0.9, (
-        f"lambda={lam_fixed} still near cap under target_violation={cfg.target_violation}"
-    )
+    assert (
+        lam_fixed < cfg.lambda_max * 0.9
+    ), f"lambda={lam_fixed} still near cap under target_violation={cfg.target_violation}"
     # Sanity: the strict (0.0) setting DOES saturate — proves the test has teeth.
-    assert lam_strict >= cfg.lambda_max * 0.9, (
-        f"control failed: strict target_violation=0.0 should saturate, got {lam_strict}"
-    )
+    assert (
+        lam_strict >= cfg.lambda_max * 0.9
+    ), f"control failed: strict target_violation=0.0 should saturate, got {lam_strict}"
