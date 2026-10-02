@@ -206,9 +206,7 @@ def main(argv: list[str] | None = None) -> int:
             adapter_r = adapter.clone()
             adapter_r.load_state_dict(baseline_state)
             adapter_r.decision_threshold = baseline_threshold
-            replay_n = min(
-                task_a_train.X.shape[0], int(0.3 / 0.7 * task_b_train.X.shape[0])
-            )
+            replay_n = min(task_a_train.X.shape[0], int(0.3 / 0.7 * task_b_train.X.shape[0]))
             replay_idx = np.random.default_rng(seed).integers(
                 0, task_a_train.X.shape[0], size=replay_n
             )
@@ -293,7 +291,9 @@ def main(argv: list[str] | None = None) -> int:
         mlflow.log_metric("forgetting_full_mean", summary["forgetting_full"]["mean"])
 
         print(f"\n=== Gate F (MNIST H3): Task A={args.task_a} -> Task B={args.task_b} ===")
-        print(f"Pre Task A F1: {summary['pre_task_a_f1'][0]:.4f} +/- {summary['pre_task_a_f1'][1]:.4f}")
+        print(
+            f"Pre Task A F1: {summary['pre_task_a_f1'][0]:.4f} +/- {summary['pre_task_a_f1'][1]:.4f}"
+        )
         print(
             f"Forgetting (full+replay): {summary['forgetting_full_with_replay']['mean']:+.4f} "
             f"+/- {summary['forgetting_full_with_replay']['std']:.4f}"

@@ -110,9 +110,9 @@ known-first-party = ["cadence", "benchmarks"]
 
 [tool.ruff.lint.per-file-ignores]
 # X, y are the numpy/sklearn convention — allow uppercase names in ML code.
-"cadence/data/**.py" = ["N803", "N806"]
+"cadence/data/**.py" = ["N803", "N806", "N815"]
 "cadence/api/server.py" = ["N806", "N815"]
-"cadence/adapters/**.py" = ["N803", "N806"]
+"cadence/adapters/**.py" = ["N803", "N806", "N815"]
 "cadence/collector/**.py" = ["N803", "N806"]
 "cadence/cdag/**.py" = ["N803", "N806"]
 "cadence/attribution/**.py" = ["N803", "N806", "N812"]

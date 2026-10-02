@@ -137,9 +137,7 @@ def _run(
                 # ladder didn't wrap; still fall through to full manually
                 result = None
                 partial_fallbacks += 1
-                report = exec_.execute(
-                    action="full", window_X=window_X, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_X, window_y=window_y)
                 action_counts["full"] += 1
                 if report.event.was_rolled_back:
                     n_rollbacks += 1
@@ -155,9 +153,7 @@ def _run(
         elif strategy_name == "periodic":
             n_periodic_since += 1
             if n_periodic_since >= periodic_period:
-                report = exec_.execute(
-                    action="full", window_X=window_X, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_X, window_y=window_y)
                 action_counts["full"] += 1
                 if report.event.was_rolled_back:
                     n_rollbacks += 1
@@ -168,9 +164,7 @@ def _run(
         elif strategy_name == "reactive_full":
             alert = trigger.evaluate(window_X)
             if alert.fired:
-                report = exec_.execute(
-                    action="full", window_X=window_X, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_X, window_y=window_y)
                 action_counts["full"] += 1
                 if report.event.was_rolled_back:
                     n_rollbacks += 1
@@ -234,7 +228,9 @@ def main(argv: list[str] | None = None) -> int:
     # Inject amount-like drift on a high-signal GMSC feature: shift
     # DebtRatio upward by 2x on the stream. Preserves temporal-order but
     # guarantees a meaningful degradation to test the loop against.
-    drift_feature_idx = ds.feature_names.index("DebtRatio") if "DebtRatio" in ds.feature_names else 0
+    drift_feature_idx = (
+        ds.feature_names.index("DebtRatio") if "DebtRatio" in ds.feature_names else 0
+    )
     scenario = DriftScenario(
         name="gmsc_debt_ratio_x2",
         spec=FeatureShiftSpec(feature_idx=drift_feature_idx, multiplicative=2.0, additive=0.0),
@@ -324,7 +320,9 @@ def main(argv: list[str] | None = None) -> int:
 
         print(f"\n=== Gate F (tree): LightGBM on GMSC + {scenario.name} ===")
         print(f"Baseline F1: {baseline_f1:.4f}  SLA: {args.sla}")
-        print(f"{'strategy':<18}{'mean_f1':>18}{'min_f1':>18}{'no-op':>10}{'partial':>10}{'full':>10}{'rollbacks':>12}")
+        print(
+            f"{'strategy':<18}{'mean_f1':>18}{'min_f1':>18}{'no-op':>10}{'partial':>10}{'full':>10}{'rollbacks':>12}"
+        )
         for name, a in summary["aggregates"].items():
             print(
                 f"{name:<18}"

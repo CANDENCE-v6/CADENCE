@@ -19,9 +19,9 @@ want a paper-grade run.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 import numpy as np
 
@@ -120,7 +120,9 @@ def load_yelp_slices(
             dates=[r["date"] for r in rows],
         )
 
-    return _shuffle(early, f"yelp_early_{early_year_max}"), _shuffle(late, f"yelp_late_{late_year_min}")
+    return _shuffle(early, f"yelp_early_{early_year_max}"), _shuffle(
+        late, f"yelp_late_{late_year_min}"
+    )
 
 
 def load_yelp_domain_shift(

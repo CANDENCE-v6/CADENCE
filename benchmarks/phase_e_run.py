@@ -47,7 +47,7 @@ import torch
 from sklearn.metrics import f1_score
 
 from cadence.adapters.neural import FraudNet, FraudNetConfig
-from cadence.carbon.model import GridProfile, HardwareProfile, estimate_cost
+from cadence.carbon.model import GridProfile, HardwareProfile
 from cadence.collector.drift_trigger import DriftTriggerConfig, PSITrigger
 from cadence.common.config import load_config
 from cadence.common.device import cuda_memory_snapshot, log_device_info
@@ -201,9 +201,7 @@ def _run_windowed_episode(
         elif strategy_name == "periodic":
             n_periodic_since += 1
             if n_periodic_since >= periodic_period:
-                report = exec_.execute(
-                    action="full", window_X=window_X, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_X, window_y=window_y)
                 total_gpu_seconds += report.event.gpu_seconds
                 total_kg_co2 += report.event.kg_co2
                 action_counts["full"] += 1
@@ -216,9 +214,7 @@ def _run_windowed_episode(
         elif strategy_name == "reactive_full":
             alert = trigger.evaluate(window_X)
             if alert.fired:
-                report = exec_.execute(
-                    action="full", window_X=window_X, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_X, window_y=window_y)
                 total_gpu_seconds += report.event.gpu_seconds
                 total_kg_co2 += report.event.kg_co2
                 action_counts["full"] += 1
@@ -281,7 +277,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     # Stream-slice F1 with no retraining — how much natural drift there is.
     undrifted_stream_f1 = _f1(
-        adapter, X_stream[: args.window_size * args.n_windows], y_stream[: args.window_size * args.n_windows]
+        adapter,
+        X_stream[: args.window_size * args.n_windows],
+        y_stream[: args.window_size * args.n_windows],
     )
     log.info(
         "baseline_ready",
@@ -418,7 +416,9 @@ def main(argv: list[str] | None = None) -> int:
             json.dump(summary, f, indent=2, default=str)
 
         print(f"\n=== Gate E: {ds.name} real drift, {args.seeds} seeds ===")
-        print(f"Baseline train F1: {baseline_f1:.4f}   Undrifted stream F1: {undrifted_stream_f1:.4f}   SLA: {args.sla}")
+        print(
+            f"Baseline train F1: {baseline_f1:.4f}   Undrifted stream F1: {undrifted_stream_f1:.4f}   SLA: {args.sla}"
+        )
         print(
             f"\n{'strategy':<18}{'mean_f1':>18}{'min_f1':>18}{'gpu_hr':>18}{'kg_co2':>18}{'actions {no,part,full}':>26}"
         )

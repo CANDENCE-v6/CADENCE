@@ -24,12 +24,6 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from benchmarks.baselines.harness import make_baseline_stream
-from benchmarks.synthetic_drift_gen import (
-    DriftScenario,
-    DriftSchedule,
-    FeatureShiftSpec,
-)
 from cadence.adapters.neural import FraudNet, FraudNetConfig
 from cadence.attribution import (
     GNNConfig,
@@ -50,7 +44,6 @@ from cadence.executor import (
     RetrainExecutor,
 )
 from cadence.executor.fallbacks import FalseAlarmConfig, is_false_alarm
-
 
 pytestmark = pytest.mark.slow
 

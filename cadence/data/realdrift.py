@@ -136,9 +136,7 @@ def load_airlines(
     for col in df.columns:
         if df[col].dtype == object:
             # ARFF categoricals arrive as bytes; decode.
-            df[col] = df[col].apply(
-                lambda v: v.decode("utf-8") if isinstance(v, bytes) else v
-            )
+            df[col] = df[col].apply(lambda v: v.decode("utf-8") if isinstance(v, bytes) else v)
 
     target = "Delay"
     y = df[target].astype(int).values.astype(np.int64)
@@ -149,11 +147,15 @@ def load_airlines(
     def _hash_col(col: pd.Series, n_bins: int = 64) -> np.ndarray:
         return col.map(lambda v: hash(v) % n_bins).values.astype(np.float32)
 
-    numeric_X = df[numeric_cols].values.astype(np.float32) if numeric_cols else np.zeros(
-        (len(df), 0), dtype=np.float32
+    numeric_X = (
+        df[numeric_cols].values.astype(np.float32)
+        if numeric_cols
+        else np.zeros((len(df), 0), dtype=np.float32)
     )
-    cat_X = np.stack([_hash_col(df[c]) for c in cat_cols], axis=1) if cat_cols else np.zeros(
-        (len(df), 0), dtype=np.float32
+    cat_X = (
+        np.stack([_hash_col(df[c]) for c in cat_cols], axis=1)
+        if cat_cols
+        else np.zeros((len(df), 0), dtype=np.float32)
     )
     X = np.concatenate([numeric_X, cat_X], axis=1).astype(np.float32)
     feature_names = numeric_cols + [f"{c}_hash" for c in cat_cols]

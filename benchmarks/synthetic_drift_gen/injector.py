@@ -178,9 +178,9 @@ class DriftInjector:
                 active, f
             ] + spec.additive * intensity[active]
             for other in spec.other_indices:
-                X[active, other] = ((spec.other_multiplicative - 1.0) * intensity[active] + 1.0) * X[
-                    active, other
-                ] + spec.other_additive * intensity[active]
+                X[active, other] = (
+                    (spec.other_multiplicative - 1.0) * intensity[active] + 1.0
+                ) * X[active, other] + spec.other_additive * intensity[active]
             self._magnitude_total += float(
                 np.mean(np.abs(intensity[active])) if active.any() else 0.0
             ) * (1 + len(spec.other_indices))
@@ -198,9 +198,12 @@ class DriftInjector:
             magnitude = abs(spec.multiplicative - 1.0) + abs(spec.additive)
             mechanism: Literal["covariate_shift", "concept_shift"] = "covariate_shift"
         elif isinstance(spec, MultiFeatureShiftSpec):
-            magnitude = abs(spec.multiplicative - 1.0) + abs(spec.additive) + len(
-                spec.other_indices
-            ) * (abs(spec.other_multiplicative - 1.0) + abs(spec.other_additive))
+            magnitude = (
+                abs(spec.multiplicative - 1.0)
+                + abs(spec.additive)
+                + len(spec.other_indices)
+                * (abs(spec.other_multiplicative - 1.0) + abs(spec.other_additive))
+            )
             mechanism = "covariate_shift"
         else:
             magnitude = spec.flip_probability

@@ -67,20 +67,14 @@ def make_disjoint_split(
     has zero exposure to them. The remaining (100 % - disjoint_share) is
     split by `train_frac` / `stream_frac`.
     """
-    n = X.shape[0]
     if criterion == "high_amount":
-        if "Amount" in feature_names:
-            f_idx = feature_names.index("Amount")
-        else:
-            f_idx = X.shape[1] - 1  # convention: last column
+        # convention: fall back to the last column when "Amount" is absent
+        f_idx = feature_names.index("Amount") if "Amount" in feature_names else X.shape[1] - 1
         col = X[:, f_idx]
         thresh = np.mean(col) + 1.5 * np.std(col)
         disjoint_mask = col >= thresh
     elif criterion == "late_time":
-        if "Time" in feature_names:
-            t_idx = feature_names.index("Time")
-        else:
-            t_idx = 0
+        t_idx = feature_names.index("Time") if "Time" in feature_names else 0
         thresh = np.quantile(X[:, t_idx], 0.90)
         disjoint_mask = X[:, t_idx] >= thresh
     elif criterion == "class_positive":

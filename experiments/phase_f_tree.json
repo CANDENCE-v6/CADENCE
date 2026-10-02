@@ -13,22 +13,22 @@
   "scenario": "gmsc_debt_ratio_x2",
   "aggregates": {
     "cadence_rule": {
-      "n_seeds": 5,
+      "n_seeds": 3,
       "mean_f1": [
-        0.44645794447126663,
+        0.4442531408501473,
         0.0
       ],
       "min_f1": [
-        0.4,
+        0.39215686274509803,
         0.0
       ],
-      "actions_full": 3.0,
+      "actions_full": 0.0,
       "actions_partial": 0.0,
-      "actions_noop": 3.0,
-      "rollbacks_mean": 2.0
+      "actions_noop": 6.0,
+      "rollbacks_mean": 0.0
     },
     "periodic": {
-      "n_seeds": 5,
+      "n_seeds": 3,
       "mean_f1": [
         0.4435994862370863,
         0.0
@@ -43,9 +43,9 @@
       "rollbacks_mean": 1.0
     },
     "reactive_full": {
-      "n_seeds": 5,
+      "n_seeds": 3,
       "mean_f1": [
-        0.43974886307206307,
+        0.44179050098326617,
         0.0
       ],
       "min_f1": [
@@ -55,18 +55,18 @@
       "actions_full": 6.0,
       "actions_partial": 0.0,
       "actions_noop": 0.0,
-      "rollbacks_mean": 2.0
+      "rollbacks_mean": 1.0
     }
   },
   "config": {
     "config": "configs/default.yaml",
-    "seeds": 5,
+    "seeds": 3,
     "window_size": 1024,
     "n_windows": 6,
-    "sla": 0.45,
+    "sla": 0.3,
     "periodic_period": 3,
     "fullretrain_epochs": 100,
-    "out": "experiments/phase_f_tree_sla045.json",
+    "out": "experiments/phase_f_tree.json",
     "n_estimators": 100
   }
 }
