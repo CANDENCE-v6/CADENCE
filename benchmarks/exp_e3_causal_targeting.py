@@ -46,14 +46,14 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn as nn
-from cadence.adapters.neural import FraudNet, FraudNetConfig
-from cadence.data.mnist_splits import load_split_mnist
 from scipy import stats as sci_stats
 from sklearn.metrics import f1_score
 
+from cadence.adapters.neural import FraudNet, FraudNetConfig
 from cadence.common.device import get_device
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
+from cadence.data.mnist_splits import load_split_mnist
 
 log = get_logger("cadence.benchmarks.e3")
 

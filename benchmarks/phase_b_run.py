@@ -37,13 +37,12 @@ from pathlib import Path
 import mlflow
 import numpy as np
 import torch
-from benchmarks.baselines.harness import make_baseline_stream
-from benchmarks.synthetic_drift_gen import build_default_scenarios
-from cadence.adapters.neural import FraudNet, FraudNetConfig
-from cadence.data.loaders import load_credit_card_fraud
 from scipy import stats as sci_stats
 from sklearn.metrics import f1_score, roc_auc_score
 
+from benchmarks.baselines.harness import make_baseline_stream
+from benchmarks.synthetic_drift_gen import build_default_scenarios
+from cadence.adapters.neural import FraudNet, FraudNetConfig
 from cadence.attribution import (
     CDAGResponsibilityScorer,
     GNNConfig,
@@ -59,6 +58,7 @@ from cadence.common.device import get_device
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
+from cadence.data.loaders import load_credit_card_fraud
 from cadence.rso.scorers import PSIResponsibilityScorer
 
 log = get_logger("cadence.benchmarks.phase_b")

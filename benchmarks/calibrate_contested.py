@@ -19,17 +19,17 @@ from __future__ import annotations
 import argparse
 
 import numpy as np
+from sklearn.metrics import f1_score
+
 from benchmarks.baselines.harness import make_baseline_stream
 from benchmarks.synthetic_drift_gen import (
     build_contested_sla_scenarios,
     build_default_scenarios,
 )
 from cadence.adapters.neural import FraudNet, FraudNetConfig
-from cadence.data.loaders import load_credit_card_fraud
-from sklearn.metrics import f1_score
-
 from cadence.common.config import load_config
 from cadence.common.seeds import set_global_seed
+from cadence.data.loaders import load_credit_card_fraud
 
 
 def _f1(adapter: FraudNet, X: np.ndarray, y: np.ndarray) -> float:

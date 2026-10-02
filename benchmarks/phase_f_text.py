@@ -29,14 +29,14 @@ from pathlib import Path
 
 import mlflow
 import numpy as np
-from cadence.adapters.text import TextConfig, TFIDFLogRegAdapter
-from cadence.data.text_yelp import load_yelp_domain_shift, load_yelp_slices
 from sklearn.metrics import f1_score
 
+from cadence.adapters.text import TextConfig, TFIDFLogRegAdapter
 from cadence.common.config import load_config
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
+from cadence.data.text_yelp import load_yelp_domain_shift, load_yelp_slices
 from cadence.executor import (
     EscalationConfig,
     EscalationDecision,

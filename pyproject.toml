@@ -103,7 +103,7 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "N", "SIM"]
-ignore = ["E501"]  # handled by formatter
+ignore = ["E501", "UP038"]  # handled by formatter
 
 [tool.ruff.lint.isort]
 known-first-party = ["cadence", "benchmarks"]

@@ -32,6 +32,8 @@ from pathlib import Path
 
 import mlflow
 import numpy as np
+from scipy import stats as sci_stats
+
 from benchmarks.baselines import (
     BaselineRunConfig,
     EWCOnlyStrategy,
@@ -45,15 +47,13 @@ from benchmarks.synthetic_drift_gen import (
     build_step_a_scenarios,
 )
 from cadence.adapters.neural import FraudNet, FraudNetConfig
-from cadence.data.loaders import load_credit_card_fraud
-from scipy import stats as sci_stats
-
 from cadence.carbon.model import GridProfile, HardwareProfile
 from cadence.collector.drift_trigger import DriftTriggerConfig, PSITrigger
 from cadence.common.config import load_config
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
+from cadence.data.loaders import load_credit_card_fraud
 from cadence.rso.env import RetrainingSandboxEnv, SandboxConfig
 from cadence.rso.lagrangian import AugmentedLagrangianConfig, AugmentedLagrangianEnv
 from cadence.rso.ppo import (
