@@ -1,0 +1,108 @@
+{
+  "aggregates": {
+    "psi_stub": {
+      "n": 2,
+      "top1_acc": [
+        1.0,
+        0.0
+      ],
+      "top3_acc": [
+        1.0,
+        0.0
+      ],
+      "mean_reciprocal_rank": [
+        1.0,
+        0.0
+      ],
+      "auroc": [
+        1.0,
+        0.0
+      ],
+      "mean_rank": [
+        1.0,
+        0.0
+      ]
+    },
+    "cdag_structural": {
+      "n": 2,
+      "top1_acc": [
+        0.0,
+        0.0
+      ],
+      "top3_acc": [
+        0.0,
+        0.0
+      ],
+      "mean_reciprocal_rank": [
+        0.25,
+        0.0
+      ],
+      "auroc": [
+        0.896551724137931,
+        0.0
+      ],
+      "mean_rank": [
+        4.0,
+        0.0
+      ]
+    }
+  },
+  "rows": [
+    {
+      "scorer": "psi_stub",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 0,
+      "gt_idx": 29,
+      "rank": 1,
+      "top1": 1,
+      "top3": 1,
+      "reciprocal_rank": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 0,
+      "gt_idx": 29,
+      "rank": 4,
+      "top1": 0,
+      "top3": 0,
+      "reciprocal_rank": 0.25,
+      "auroc": 0.896551724137931
+    },
+    {
+      "scorer": "psi_stub",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 1,
+      "gt_idx": 29,
+      "rank": 1,
+      "top1": 1,
+      "top3": 1,
+      "reciprocal_rank": 1.0,
+      "auroc": 1.0
+    },
+    {
+      "scorer": "cdag_structural",
+      "scenario": "amount_multiplicative_abrupt",
+      "seed": 1,
+      "gt_idx": 29,
+      "rank": 4,
+      "top1": 0,
+      "top3": 0,
+      "reciprocal_rank": 0.25,
+      "auroc": 0.896551724137931
+    }
+  ],
+  "wilcoxon_cdag_gt_psi": {
+    "reciprocal_rank": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_pairs": 2
+    },
+    "auroc": {
+      "stat": 0.0,
+      "p": 1.0,
+      "n_pairs": 2
+    }
+  }
+}

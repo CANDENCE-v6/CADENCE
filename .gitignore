@@ -1,96 +1,39 @@
-# --- Python ---
+@"
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-build/
-dist/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-.eggs/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-.coverage.*
-htmlcov/
-coverage.xml
-.hypothesis/
-.tox/
-.nox/
+*.pyo
 
-# --- Virtual envs ---
-.venv/
+# Virtual environments
 venv/
+.venv/
 env/
-ENV/
 
-# --- IDEs ---
+# Environment/secrets
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
 .vscode/
 .idea/
-*.swp
-.DS_Store
 
-# --- OS ---
+# OS
+.DS_Store
 Thumbs.db
 
-# --- MLflow local store ---
-experiments/mlruns/
-experiments/**/artifacts/
-# sqlite tracking db + backups from the mlflow>=2 migration (P5/W-14 fix path).
-experiments/mlflow.db
-experiments/mlflow.db.bak-*
-experiments/mlflow.db-journal
-experiments/mlflow.db-shm
-experiments/mlflow.db-wal
-
-# --- Gate A resumable-runner state ---
-# The ledger is per-machine runtime state (git commit + config hash reproduce
-# it), and per-seed result JSONs are regenerable from the runner. Backups
-# tagged with .pre-* are audit-trail files — track only if you deliberately
-# want them in history.
-experiments/gate_a_ledger.json
-experiments/gate_a_ledger.pre-*.json
-experiments/gate_a_stage1/
-experiments/gate_a_stage2/
-
-# --- Session / job logs ---
-logs/
-*.log
-
-# --- CADENCE runtime caches ---
-.cadence_cache/
-*.ckpt
+# Large ML/data files
 *.pt
-outputs/
+*.pth
+*.h5
+*.onnx
+*.pkl
+*.joblib
 
-# --- Data: never commit raw Kaggle/UCI files ---
-# Full Dataset/ tree is populated locally per CADENCE-datasets-verified.md;
-# committing it violates Kaggle terms and would bloat the repo (>500k files).
-Dataset/*
-!Dataset/README.md
-
-# --- MLruns at top-level (in addition to experiments/mlruns) ---
-mlruns/
-
-# --- Notes / one-shot output the plan flagged as un-committable ---
-*.zip
-!experiments/**/artifacts/model.pkl
-cadence.egg-info/
-
-# --- Torchvision downloads ---
-data/MNIST/
-data/CIFAR10/
-
-# --- Streamlit ---
-.streamlit/secrets.toml
-
-# --- CodeCarbon output ---
-emissions.csv
-
-# Gate evaluator report (regenerable from ledger + log)
-experiments/gate_a_stage1_gates.json
-experiments/gate_a_stage2_gates.json
+# Logs / temporary files
+*.log
+*.tmp
+"@ | Set-Content .gitignore
