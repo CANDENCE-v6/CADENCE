@@ -146,7 +146,9 @@ def test_decide_uses_learned_policy_when_checkpoint_loaded(client: TestClient) -
             last_err = e
             continue
     if not loaded:
-        pytest.skip(f"all {len(existing)} candidate PPO checkpoints failed to load; last error: {last_err}")
+        pytest.skip(
+            f"all {len(existing)} candidate PPO checkpoints failed to load; last error: {last_err}"
+        )
 
     # Match the 4-feature trigger baseline from _prep_state().
     rng = np.random.default_rng(2)

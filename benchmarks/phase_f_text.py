@@ -29,14 +29,14 @@ from pathlib import Path
 
 import mlflow
 import numpy as np
+from cadence.adapters.text import TextConfig, TFIDFLogRegAdapter
+from cadence.data.text_yelp import load_yelp_domain_shift, load_yelp_slices
 from sklearn.metrics import f1_score
 
-from cadence.adapters.text import TextConfig, TFIDFLogRegAdapter
 from cadence.common.config import load_config
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
-from cadence.data.text_yelp import load_yelp_domain_shift, load_yelp_slices
 from cadence.executor import (
     EscalationConfig,
     EscalationDecision,
@@ -148,9 +148,7 @@ def _windowed_run(
                     target_layer_for_partial="text_stub",
                 )
             except NotImplementedError:
-                report = exec_.execute(
-                    action="full", window_X=window_texts_arr, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_texts_arr, window_y=window_y)
                 action_counts["full"] += 1
                 if report.event.was_rolled_back:
                     n_rollbacks += 1
@@ -166,9 +164,7 @@ def _windowed_run(
         elif strategy_name == "periodic":
             n_periodic_since += 1
             if n_periodic_since >= periodic_period:
-                report = exec_.execute(
-                    action="full", window_X=window_texts_arr, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_texts_arr, window_y=window_y)
                 action_counts["full"] += 1
                 if report.event.was_rolled_back:
                     n_rollbacks += 1
@@ -180,9 +176,7 @@ def _windowed_run(
             live_matrix = adapter.vectorizer.transform(window_texts)
             psi = _psi_on_tfidf(trigger_matrix, live_matrix, top_k=200)
             if psi >= psi_threshold:
-                report = exec_.execute(
-                    action="full", window_X=window_texts_arr, window_y=window_y
-                )
+                report = exec_.execute(action="full", window_X=window_texts_arr, window_y=window_y)
                 action_counts["full"] += 1
                 if report.event.was_rolled_back:
                     n_rollbacks += 1
@@ -223,9 +217,7 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
 
     cfg = load_config(args.config)
-    log.info(
-        "phase_f_text_start", seeds=args.seeds, per_slice_cap=args.per_slice_cap
-    )
+    log.info("phase_f_text_start", seeds=args.seeds, per_slice_cap=args.per_slice_cap)
 
     if args.split == "domain":
         early, late = load_yelp_domain_shift(
@@ -266,9 +258,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     # Precompute the trigger reference matrix once.
-    trigger_matrix = adapter.vectorizer.transform(
-        early.texts[: min(3000, len(early.texts))]
-    )
+    trigger_matrix = adapter.vectorizer.transform(early.texts[: min(3000, len(early.texts))])
 
     strategies = ("cadence_rule", "periodic", "reactive_full")
     results: dict[str, list[dict]] = {s: [] for s in strategies}

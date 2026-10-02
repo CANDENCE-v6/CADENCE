@@ -31,9 +31,13 @@ def _default_of(source: str, class_name: str, field_name: str) -> object:
     for node in ast.walk(tree):
         if isinstance(node, ast.ClassDef) and node.name == class_name:
             for stmt in node.body:
-                if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name):
-                    if stmt.target.id == field_name and stmt.value is not None:
-                        return ast.literal_eval(stmt.value)
+                if (
+                    isinstance(stmt, ast.AnnAssign)
+                    and isinstance(stmt.target, ast.Name)
+                    and stmt.target.id == field_name
+                    and stmt.value is not None
+                ):
+                    return ast.literal_eval(stmt.value)
     raise AssertionError(f"{class_name}.{field_name} not found in source")
 
 
@@ -79,13 +83,17 @@ def test_phase_a_run_dual_lr_arg_default_is_calmed() -> None:
     tree = ast.parse(src)
     found_defaults: list[float] = []
     for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-            if node.func.attr == "add_argument":
-                # Match by first positional arg.
-                if node.args and isinstance(node.args[0], ast.Constant) and node.args[0].value == "--dual-lr":
-                    for kw in node.keywords:
-                        if kw.arg == "default":
-                            found_defaults.append(ast.literal_eval(kw.value))
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "add_argument"
+            and node.args
+            and isinstance(node.args[0], ast.Constant)
+            and node.args[0].value == "--dual-lr"
+        ):
+            for kw in node.keywords:
+                if kw.arg == "default":
+                    found_defaults.append(ast.literal_eval(kw.value))
     assert found_defaults, "`--dual-lr` add_argument not found in phase_a_run.py"
     assert found_defaults[0] == 1.0, (
         f"phase_a_run --dual-lr default = {found_defaults[0]}, expected 1.0 "

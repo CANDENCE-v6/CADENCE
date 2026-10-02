@@ -117,7 +117,7 @@ def fig_h3_split_mnist(out_dir: Path, dpi: int) -> None:
         "H3 on Split-MNIST {0,1} → {2,3}, 10 seeds  (R-Gate-F-mnist-n10)\n"
         "Wilcoxon partial<naive p=0.001;  partial<replay p=0.001"
     )
-    for i, (m, s) in enumerate(zip(means, stds, strict=True)):
+    for i, (m, _s) in enumerate(zip(means, stds, strict=True)):
         ax.text(i, m + (0.02 if m >= 0 else -0.04), f"{m:+.3f}", ha="center", fontsize=9)
     ax.grid(axis="y", alpha=0.3)
     _save(fig, out_dir, "h3_split_mnist_forgetting.png", dpi)
@@ -147,7 +147,9 @@ def fig_elec2_f1_over_time(out_dir: Path, dpi: int) -> None:
         x = np.arange(len(mean))
         ax.plot(x, mean, marker="o", label=strat, color=colours.get(strat, "grey"))
         ax.fill_between(x, mean - std, mean + std, alpha=0.15, color=colours.get(strat, "grey"))
-    ax.axhline(summary.get("config", {}).get("sla", 0.65), linestyle="--", color="#666", label="SLA")
+    ax.axhline(
+        summary.get("config", {}).get("sla", 0.65), linestyle="--", color="#666", label="SLA"
+    )
     ax.set_xlabel("Window index")
     ax.set_ylabel("Mean F1 (± std across seeds)")
     ax.set_title("Elec2 real drift — F1 trajectory per strategy  (R-Gate-E)")
@@ -181,7 +183,11 @@ def fig_tree_pareto(out_dir: Path, dpi: int) -> None:
         f1, cost = _extract(s)
         ax.scatter(cost, f1, s=180, color=c, edgecolor="#333", zorder=5, label=s)
         ax.annotate(
-            s, xy=(cost, f1), xytext=(6, 6), textcoords="offset points", fontsize=9,
+            s,
+            xy=(cost, f1),
+            xytext=(6, 6),
+            textcoords="offset points",
+            fontsize=9,
         )
     ax.set_xlabel("Full-retrain actions (proxy for compute cost)")
     ax.set_ylabel("Mean F1")
@@ -205,7 +211,7 @@ def fig_robustness_dropout(out_dir: Path, dpi: int) -> None:
     ntl = summary.get("noisy_telemetry_auroc", {})
     if not ntl:
         return
-    fracs = sorted(float(k) for k in ntl.keys())
+    fracs = sorted(float(k) for k in ntl)
     means = [float(ntl[str(f)][0]) for f in fracs]
     stds = [float(ntl[str(f)][1]) for f in fracs]
 
@@ -275,7 +281,10 @@ def fig_surrogate_calibration(out_dir: Path, dpi: int) -> None:
     ax.set_ylim(-0.02, 1.02)
     r2_str = f"{r2:.3f}" if isinstance(r2, (int, float)) else str(r2)
     mae_str = f"{mae:.3f}" if isinstance(mae, (int, float)) else str(mae)
-    ax.set_title(f"Surrogate calibration on held-out sandbox val split\n" f"R²={r2_str}  MAE={mae_str}  (R-Gate-C)")
+    ax.set_title(
+        f"Surrogate calibration on held-out sandbox val split\n"
+        f"R²={r2_str}  MAE={mae_str}  (R-Gate-C)"
+    )
     ax.legend(loc="upper left")
     ax.grid(alpha=0.3)
     _save(fig, out_dir, "surrogate_calibration.png", dpi)

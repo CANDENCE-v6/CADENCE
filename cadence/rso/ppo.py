@@ -251,6 +251,7 @@ def train_ppo(
     # can be evaluated from MLflow after training (G2 is covered by
     # ppo/train/entropy_loss, which MLflowCallback already forwards).
     from stable_baselines3.common.callbacks import CallbackList
+
     callbacks = CallbackList([MLflowCallback(), RewardComponentCallback()])
     model.learn(total_timesteps=cfg.total_timesteps, callback=callbacks)
     log.info("ppo_train_done", wall_s=time.perf_counter() - t0)

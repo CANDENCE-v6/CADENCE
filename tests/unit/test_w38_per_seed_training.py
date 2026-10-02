@@ -111,14 +111,20 @@ def _run_main_with_scenarios(n_scenarios: int, n_seeds: int, tmp_path):
 
         rc = pa.main(
             [
-                "--config", "configs/default.yaml",
-                "--seeds", str(n_seeds),
+                "--config",
+                "configs/default.yaml",
+                "--seeds",
+                str(n_seeds),
                 "--per-seed-policies",
                 "--contested-only",
-                "--train-timesteps", "10",
-                "--n-windows", "2",
-                "--window-size", "8",
-                "--out", str(out),
+                "--train-timesteps",
+                "10",
+                "--n-windows",
+                "2",
+                "--window-size",
+                "8",
+                "--out",
+                str(out),
             ]
         )
     return rc, mock_train

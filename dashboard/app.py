@@ -106,9 +106,7 @@ def _f1_series_panel(summary: dict) -> None:
     fig = go.Figure()
     for strat in df["strategy"].unique():
         d = df[df["strategy"] == strat].groupby("step")["F1"].mean().reset_index()
-        fig.add_trace(
-            go.Scatter(x=d["step"], y=d["F1"], mode="lines+markers", name=strat)
-        )
+        fig.add_trace(go.Scatter(x=d["step"], y=d["F1"], mode="lines+markers", name=strat))
     fig.update_layout(
         xaxis_title="Window index",
         yaxis_title="Mean F1 (across seeds)",
@@ -155,7 +153,11 @@ def _cdag_panel(summary: dict) -> None:
         dtype=float,
     )
     node_trace = go.Scatter(
-        x=xs, y=ys, mode="markers+text", text=labels, textposition="top center",
+        x=xs,
+        y=ys,
+        mode="markers+text",
+        text=labels,
+        textposition="top center",
         marker=dict(
             size=[16] * len(feat_names) + [22, 22, 22, 32],
             color=["#5aa6ff"] * len(feat_names) + ["#f6c85f", "#f6c85f", "#f6c85f", "#e64c4c"],
@@ -209,15 +211,23 @@ def _render_real_cdag(row: dict) -> None:
     sizes = []
     for i in range(n):
         if i == perf_idx:
-            colours.append("#e64c4c"); sizes.append(28)
+            colours.append("#e64c4c")
+            sizes.append(28)
         elif i == gt:
-            colours.append("#00c9c9"); sizes.append(26)
+            colours.append("#00c9c9")
+            sizes.append(26)
         elif i in feat_idx:
-            colours.append("#5aa6ff"); sizes.append(14)
+            colours.append("#5aa6ff")
+            sizes.append(14)
         else:
-            colours.append("#f6c85f"); sizes.append(20)
+            colours.append("#f6c85f")
+            sizes.append(20)
     node_trace = go.Scatter(
-        x=xs, y=ys, mode="markers+text", text=labels, textposition="top center",
+        x=xs,
+        y=ys,
+        mode="markers+text",
+        text=labels,
+        textposition="top center",
         marker=dict(size=sizes, color=colours, line=dict(width=1, color="#2d2d2d")),
         hoverinfo="text",
     )
@@ -263,20 +273,18 @@ def _responsibility_panel(summary: dict) -> None:
         sel_scen = st.selectbox("Scenario", scenarios, key="resp_scen")
         seeds = sorted({r["seed"] for r in scored_rows if r["scenario"] == sel_scen})
         sel_seed = st.selectbox("Seed", seeds, key="resp_seed")
-        row = next(
-            r for r in scored_rows if r["scenario"] == sel_scen and r["seed"] == sel_seed
-        )
+        row = next(r for r in scored_rows if r["scenario"] == sel_scen and r["seed"] == sel_seed)
         gt = int(row.get("gt_idx", -1))
         labels = list(row.get("node_labels", []))
         feat_indices = list(row.get("feature_indices", []))
-        feat_names = [labels[i] for i in feat_indices] if labels else [f"f{i}" for i in feat_indices]
+        feat_names = (
+            [labels[i] for i in feat_indices] if labels else [f"f{i}" for i in feat_indices]
+        )
         for scorer_name, scores in row["per_scorer_feature_scores"].items():
             df = pd.DataFrame({"feature": feat_names, "score": scores})
             df = df.sort_values("score", ascending=False).head(10)
             colour = ["#00c9c9" if f == labels[gt] else "#5aa6ff" for f in df["feature"]]
-            fig = go.Figure(
-                data=[go.Bar(x=df["feature"], y=df["score"], marker_color=colour)]
-            )
+            fig = go.Figure(data=[go.Bar(x=df["feature"], y=df["score"], marker_color=colour)])
             fig.update_layout(
                 title=f"{scorer_name} — top 10 (ground truth `{labels[gt]}` in teal)",
                 height=260,

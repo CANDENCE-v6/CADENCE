@@ -152,6 +152,7 @@ After Stage 2 completes, write R-Gate-A-final to docs/results.md with:
   * Total wall-time per seed and aggregate.
   * The full ledger and MLflow DB imported back to local.
 """
+
 from __future__ import annotations
 
 import sys

@@ -27,24 +27,25 @@ import statistics
 from pathlib import Path
 
 import numpy as np
-
 from benchmarks.baselines.harness import make_baseline_stream
 from benchmarks.synthetic_drift_gen import build_contested_sla_scenarios
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.loaders import load_credit_card_fraud
+
 from cadence.attribution import GNNConfig, GNNResponsibilityScorer
 from cadence.carbon.model import GridProfile, HardwareProfile
 from cadence.common.config import load_config
 from cadence.common.device import get_device, log_device_info
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
-from cadence.data.loaders import load_credit_card_fraud
 from cadence.rso.env import RetrainingSandboxEnv, SandboxConfig
 
 log = get_logger("cadence.benchmarks.e2")
 
 
 def _rule(obs, sla):
-    margin = float(obs[13]); conc = float(obs[14])
+    margin = float(obs[13])
+    conc = float(obs[14])
     if margin <= 1e-3:
         return 0
     return 1 if conc > 0.5 else 2
@@ -76,9 +77,14 @@ def evaluate_policy(action_fn, env, n_windows, sla):
             sla_viol += 1
         if term or trunc:
             break
-    return {"mean_f1": _mean(f1s), "min_f1": min(f1s) if f1s else 0.0,
-            "total_gpu_hr": float(sum(costs)), "sla_violations": sla_viol,
-            "mean_reward": _mean(rewards), "actions": acts}
+    return {
+        "mean_f1": _mean(f1s),
+        "min_f1": min(f1s) if f1s else 0.0,
+        "total_gpu_hr": float(sum(costs)),
+        "sla_violations": sla_viol,
+        "mean_reward": _mean(rewards),
+        "actions": acts,
+    }
 
 
 def main(argv=None) -> int:
@@ -93,49 +99,77 @@ def main(argv=None) -> int:
     args = p.parse_args(argv)
 
     cfg = load_config(args.config)
-    dev = get_device(); log_device_info(dev)
+    dev = get_device()
+    log_device_info(dev)
 
     ds = load_credit_card_fraud(cfg.data, seed=42)
     n_train = ds.X_train.shape[0]
-    rng = np.random.default_rng(42); idx = np.arange(n_train); rng.shuffle(idx)
+    rng = np.random.default_rng(42)
+    idx = np.arange(n_train)
+    rng.shuffle(idx)
     n_pre = int(0.70 * n_train)
     X_pre, y_pre = ds.X_train[idx[:n_pre]], ds.y_train[idx[:n_pre]]
-    X_stream = ds.X_train[idx[n_pre:n_pre + 25000]]
-    y_stream = ds.y_train[idx[n_pre:n_pre + 25000]]
+    X_stream = ds.X_train[idx[n_pre : n_pre + 25000]]
+    y_stream = ds.y_train[idx[n_pre : n_pre + 25000]]
 
     set_global_seed(42)
-    adapter = FraudNet(FraudNetConfig(
-        input_dim=ds.X_train.shape[1], hidden_dims=list(cfg.model.hidden_dims),
-        dropout=cfg.model.dropout, lr=cfg.model.lr, batch_size=cfg.model.batch_size,
-        max_epochs=cfg.model.max_epochs, early_stopping_patience=cfg.model.early_stopping_patience,
-        class_weighted=cfg.model.class_weighted))
+    adapter = FraudNet(
+        FraudNetConfig(
+            input_dim=ds.X_train.shape[1],
+            hidden_dims=list(cfg.model.hidden_dims),
+            dropout=cfg.model.dropout,
+            lr=cfg.model.lr,
+            batch_size=cfg.model.batch_size,
+            max_epochs=cfg.model.max_epochs,
+            early_stopping_patience=cfg.model.early_stopping_patience,
+            class_weighted=cfg.model.class_weighted,
+        )
+    )
     adapter.fit(X_pre[:-5000], y_pre[:-5000], X_val=X_pre[-5000:], y_val=y_pre[-5000:])
     baseline_state = adapter.state_dict()
     baseline_threshold = adapter.decision_threshold
     from sklearn.metrics import f1_score
+
     bp = adapter.predict_proba(X_pre[-5000:])
-    baseline_f1 = float(f1_score(y_pre[-5000:], (bp >= baseline_threshold).astype(int), zero_division=0))
+    baseline_f1 = float(
+        f1_score(y_pre[-5000:], (bp >= baseline_threshold).astype(int), zero_division=0)
+    )
 
     scorer = GNNResponsibilityScorer.build(
-        adapter=adapter, baseline_X=X_pre[:20000], feature_names=ds.feature_names,
+        adapter=adapter,
+        baseline_X=X_pre[:20000],
+        feature_names=ds.feature_names,
         baseline_f1=baseline_f1,
         k_overrides={"layer1": cfg.cdag.layer_1_clusters, "layer2": cfg.cdag.layer_2_clusters},
-        window_size=512, gnn_cfg=GNNConfig())
+        window_size=512,
+        gnn_cfg=GNNConfig(),
+    )
 
     scenarios = build_contested_sla_scenarios(ds.feature_names)
     sandbox_cfg = SandboxConfig(
-        window_size=args.eval_window_size, max_windows_per_episode=args.n_windows,
-        finetune_epochs=3, fullretrain_epochs=8, replay_buffer_size=5000,
-        sla_target=args.sla, ewc_penalty=1000.0, ewc_fisher_sample_size=2000,
-        ewc_cache_fisher=True, hardware=HardwareProfile(), grid=GridProfile())
+        window_size=args.eval_window_size,
+        max_windows_per_episode=args.n_windows,
+        finetune_epochs=3,
+        fullretrain_epochs=8,
+        replay_buffer_size=5000,
+        sla_target=args.sla,
+        ewc_penalty=1000.0,
+        ewc_fisher_sample_size=2000,
+        ewc_cache_fisher=True,
+        hardware=HardwareProfile(),
+        grid=GridProfile(),
+    )
 
     # Load PPO once per seed (per-seed Stage-1 policies preferred).
     def load_ppo(seed):
-        for path in (f"experiments/rso_ppo_phase_a_seed{seed}.zip",
-                     "experiments/rso_ppo_phase_a.zip"):
+        for path in (
+            f"experiments/rso_ppo_phase_a_seed{seed}.zip",
+            "experiments/rso_ppo_phase_a.zip",
+        ):
             if os.path.exists(path):
                 try:
                     from stable_baselines3 import PPO
+
                     m = PPO.load(path, custom_objects={"lr_schedule": lambda _: 0.0})
                     return m, path
                 except Exception as e:  # noqa: BLE001
@@ -152,14 +186,19 @@ def main(argv=None) -> int:
             sX, sY = stream[0], stream[1]
             ppo, ppo_path = load_ppo(seed)
 
-            def make_env():
+            def make_env(sX=sX, sY=sY):
                 fresh = adapter.clone()
                 fresh.load_state_dict({k: v.clone() for k, v in baseline_state.items()})
                 fresh.decision_threshold = baseline_threshold
                 return RetrainingSandboxEnv(
-                    initial_adapter=fresh, historical_X=X_pre, historical_y=y_pre,
-                    drifted_stream_X=sX, drifted_stream_y=sY,
-                    responsibility_scorer=scorer, cfg=sandbox_cfg)
+                    initial_adapter=fresh,
+                    historical_X=X_pre,
+                    historical_y=y_pre,
+                    drifted_stream_X=sX,
+                    drifted_stream_y=sY,
+                    responsibility_scorer=scorer,
+                    cfg=sandbox_cfg,
+                )
 
             action_fns = {
                 "no_op": lambda o: 0,
@@ -168,7 +207,9 @@ def main(argv=None) -> int:
                 "greedy_rule": lambda o: _rule(o, args.sla),
             }
             if ppo is not None:
-                action_fns["ppo"] = lambda o, _m=ppo: int(np.asarray(_m.predict(o, deterministic=True)[0]).flatten()[0])
+                action_fns["ppo"] = lambda o, _m=ppo: int(
+                    np.asarray(_m.predict(o, deterministic=True)[0]).flatten()[0]
+                )
 
             for pol in policies:
                 if pol not in action_fns:
@@ -191,14 +232,20 @@ def main(argv=None) -> int:
             "n": len(outs),
         }
 
-    summary = {"experiment": "E2_ppo_necessity", "sla": args.sla,
-               "scenarios": [s.name for s in scenarios], "seeds": args.seeds,
-               "aggregate": {pol: agg(pol) for pol in policies},
-               "raw": results, "config": vars(args)}
+    summary = {
+        "experiment": "E2_ppo_necessity",
+        "sla": args.sla,
+        "scenarios": [s.name for s in scenarios],
+        "seeds": args.seeds,
+        "aggregate": {pol: agg(pol) for pol in policies},
+        "raw": results,
+        "config": vars(args),
+    }
 
     # Paired: PPO vs greedy on mean_reward and mean_f1 (same (scenario,seed) order).
     try:
         from scipy import stats as sci
+
         ppo_r = [o["mean_reward"] for o in results["ppo"]]
         gr_r = [o["mean_reward"] for o in results["greedy_rule"]]
         if len(ppo_r) == len(gr_r) and len(ppo_r) >= 2:
@@ -216,10 +263,15 @@ def main(argv=None) -> int:
     for pol in policies:
         a = summary["aggregate"][pol]
         if a is None:
-            print(f"{pol:<16}(no PPO checkpoint loaded)"); continue
-        print(f"{pol:<16}{a['mean_f1']:.4f}      {a['total_gpu_hr']:.3e}   {a['sla_violations']:.2f}      {a['mean_reward']:+.4f}")
+            print(f"{pol:<16}(no PPO checkpoint loaded)")
+            continue
+        print(
+            f"{pol:<16}{a['mean_f1']:.4f}      {a['total_gpu_hr']:.3e}   {a['sla_violations']:.2f}      {a['mean_reward']:+.4f}"
+        )
     if "wilcoxon_ppo_vs_greedy_reward_p" in summary:
-        print(f"\nWilcoxon PPO vs greedy (reward): p={summary['wilcoxon_ppo_vs_greedy_reward_p']:.4f}")
+        print(
+            f"\nWilcoxon PPO vs greedy (reward): p={summary['wilcoxon_ppo_vs_greedy_reward_p']:.4f}"
+        )
     print(f"\nwrote {args.out}")
     return 0
 

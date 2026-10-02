@@ -28,11 +28,12 @@ from pathlib import Path
 import mlflow
 import numpy as np
 import torch
-from sklearn.metrics import roc_auc_score
-
 from benchmarks.baselines.harness import make_baseline_stream
 from benchmarks.synthetic_drift_gen import build_default_scenarios
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.loaders import load_credit_card_fraud
+from sklearn.metrics import roc_auc_score
+
 from cadence.attribution import (
     GNNConfig,
     GNNResponsibilityScorer,
@@ -48,7 +49,6 @@ from cadence.common.device import get_device, log_device_info
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
-from cadence.data.loaders import load_credit_card_fraud
 
 log = get_logger("cadence.benchmarks.phase_f_robustness")
 
@@ -83,7 +83,9 @@ def _drop_edges(weights: np.ndarray, drop_frac: float, rng: np.random.Generator)
     return W
 
 
-def _false_alarm_rate(trigger: PSITrigger, stream_X: np.ndarray, *, window_size: int, n_windows: int) -> tuple[int, int]:
+def _false_alarm_rate(
+    trigger: PSITrigger, stream_X: np.ndarray, *, window_size: int, n_windows: int
+) -> tuple[int, int]:
     fired = 0
     total = 0
     for w in range(n_windows):
@@ -168,7 +170,9 @@ def main(argv: list[str] | None = None) -> int:
             )
             fa_rate = fired_un / max(total_un, 1)
             undrifted_rates.append(fa_rate)
-            log.info("false_alarm_undrifted", seed=seed, fired=fired_un, total=total_un, rate=fa_rate)
+            log.info(
+                "false_alarm_undrifted", seed=seed, fired=fired_un, total=total_un, rate=fa_rate
+            )
 
             # For contrast: same trigger on an amount-shift stream.
             scenarios = build_default_scenarios(ds.feature_names)
@@ -279,9 +283,7 @@ def main(argv: list[str] | None = None) -> int:
         summary = {
             "false_alarm_rate_undrifted": {"mean": fa[0], "std": fa[1], "values": undrifted_rates},
             "true_alert_rate_drifted": {"mean": tr[0], "std": tr[1], "values": drifted_rates},
-            "noisy_telemetry_auroc": {
-                str(p): _mean_std(drop_auroc[p]) for p in args.drop_fracs
-            },
+            "noisy_telemetry_auroc": {str(p): _mean_std(drop_auroc[p]) for p in args.drop_fracs},
             "config": vars(args),
         }
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)

@@ -266,9 +266,7 @@ class RetrainExecutor:
         # Replay buffer to counter over-fitting to the drifted slice
         # (Part-3B mechanics).
         replay_n = int(self.cfg.replay_buffer_size * (1 - self.cfg.replay_ratio_new))
-        replay_idx = np.random.default_rng(0).integers(
-            0, self.historical_X.shape[0], size=replay_n
-        )
+        replay_idx = np.random.default_rng(0).integers(0, self.historical_X.shape[0], size=replay_n)
         replay_X = self.historical_X[replay_idx]
         replay_y = self.historical_y[replay_idx]
 

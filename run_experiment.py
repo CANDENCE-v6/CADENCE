@@ -41,7 +41,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-
 LEDGER_PATH = Path("experiments/gate_a_ledger.json")
 
 
@@ -104,9 +103,7 @@ def atomic_write_json(path: Path, obj: Any) -> None:
     """Write JSON via temp file + os.replace so a kill mid-write cannot corrupt."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp_path = tempfile.mkstemp(
-        prefix=path.name + ".", suffix=".tmp", dir=str(path.parent)
-    )
+    fd, tmp_path = tempfile.mkstemp(prefix=path.name + ".", suffix=".tmp", dir=str(path.parent))
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(obj, f, indent=2, default=str)
@@ -306,7 +303,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--stage", type=int, choices=[1, 2], default=1)
     p.add_argument("--seed", type=int, default=None, help="Run only this seed within the stage.")
     p.add_argument("--resume", action="store_true", help="Skip seeds already COMPLETED per ledger.")
-    p.add_argument("--dry-run", action="store_true", help="Validate config + print plan; no training.")
+    p.add_argument(
+        "--dry-run", action="store_true", help="Validate config + print plan; no training."
+    )
     p.add_argument(
         "--num-seeds",
         type=int,

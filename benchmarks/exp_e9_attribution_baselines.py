@@ -27,23 +27,26 @@ from pathlib import Path
 
 import numpy as np
 import torch
-import torch.nn as nn
-from scipy import stats as sci_stats
-from sklearn.metrics import f1_score, roc_auc_score
-
 from benchmarks.baselines.harness import make_baseline_stream
 from benchmarks.synthetic_drift_gen import build_default_scenarios
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.loaders import load_credit_card_fraud
+from scipy import stats as sci_stats
+from sklearn.metrics import f1_score, roc_auc_score
+
 from cadence.attribution import (
-    CDAGResponsibilityScorer, GNNConfig, GNNResponsibilityScorer,
-    GNNTrainConfig, generate_sandbox_dataset, train_gnn,
+    CDAGResponsibilityScorer,
+    GNNConfig,
+    GNNResponsibilityScorer,
+    GNNTrainConfig,
+    generate_sandbox_dataset,
+    train_gnn,
 )
 from cadence.collector.drift_trigger import DriftTriggerConfig, PSITrigger
 from cadence.common.config import load_config
 from cadence.common.device import get_device
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
-from cadence.data.loaders import load_credit_card_fraud
 from cadence.rso.scorers import PSIResponsibilityScorer
 
 log = get_logger("cadence.benchmarks.e9")
@@ -56,7 +59,8 @@ def _rank_of(scores, t):
 
 
 def _auroc(scores, t):
-    lab = np.zeros_like(scores); lab[t] = 1
+    lab = np.zeros_like(scores)
+    lab[t] = 1
     try:
         return float(roc_auc_score(lab, scores))
     except ValueError:
@@ -65,7 +69,11 @@ def _auroc(scores, t):
 
 def _ms(vs):
     vs = [v for v in vs if v is not None and not (isinstance(v, float) and np.isnan(v))]
-    return (float(statistics.fmean(vs)), float(statistics.pstdev(vs)) if len(vs) > 1 else 0.0) if vs else (0.0, 0.0)
+    return (
+        (float(statistics.fmean(vs)), float(statistics.pstdev(vs)) if len(vs) > 1 else 0.0)
+        if vs
+        else (0.0, 0.0)
+    )
 
 
 def _f1(adapter, X, y):
@@ -74,7 +82,8 @@ def _f1(adapter, X, y):
 
 
 def grad_scores(adapter, X):
-    mod = adapter._module; dev = get_device()
+    mod = adapter._module
+    dev = get_device()
     mod.eval()
     xb = torch.tensor(X[:2048].astype(np.float32), device=dev, requires_grad=True)
     logits, _ = mod(xb)
@@ -109,36 +118,71 @@ def main(argv=None) -> int:
     cfg = load_config(args.config)
     dev = get_device()
     ds = load_credit_card_fraud(cfg.data, seed=42)
-    n = ds.X_train.shape[0]; rng = np.random.default_rng(42); idx = np.arange(n); rng.shuffle(idx)
-    npre = int(0.70 * n); nstr = int(0.25 * n)
+    n = ds.X_train.shape[0]
+    rng = np.random.default_rng(42)
+    idx = np.arange(n)
+    rng.shuffle(idx)
+    npre = int(0.70 * n)
+    nstr = int(0.25 * n)
     X_pre, y_pre = ds.X_train[idx[:npre]], ds.y_train[idx[:npre]]
-    X_stream, y_stream = ds.X_train[idx[npre:npre+nstr]], ds.y_train[idx[npre:npre+nstr]]
+    X_stream, y_stream = ds.X_train[idx[npre : npre + nstr]], ds.y_train[idx[npre : npre + nstr]]
 
     set_global_seed(42)
-    adapter = FraudNet(FraudNetConfig(
-        input_dim=ds.X_train.shape[1], hidden_dims=list(cfg.model.hidden_dims),
-        dropout=cfg.model.dropout, lr=cfg.model.lr, batch_size=cfg.model.batch_size,
-        max_epochs=cfg.model.max_epochs, early_stopping_patience=cfg.model.early_stopping_patience,
-        class_weighted=cfg.model.class_weighted))
+    adapter = FraudNet(
+        FraudNetConfig(
+            input_dim=ds.X_train.shape[1],
+            hidden_dims=list(cfg.model.hidden_dims),
+            dropout=cfg.model.dropout,
+            lr=cfg.model.lr,
+            batch_size=cfg.model.batch_size,
+            max_epochs=cfg.model.max_epochs,
+            early_stopping_patience=cfg.model.early_stopping_patience,
+            class_weighted=cfg.model.class_weighted,
+        )
+    )
     adapter.fit(X_pre[:-5000], y_pre[:-5000], X_val=X_pre[-5000:], y_val=y_pre[-5000:])
     bf1 = _f1(adapter, X_pre[-5000:], y_pre[-5000:])
 
-    trigger = PSITrigger(baseline_X=X_pre, feature_names=ds.feature_names,
-                         cfg=DriftTriggerConfig(psi_threshold=0.25, min_window_rows=200))
+    trigger = PSITrigger(
+        baseline_X=X_pre,
+        feature_names=ds.feature_names,
+        cfg=DriftTriggerConfig(psi_threshold=0.25, min_window_rows=200),
+    )
     psi_scorer = PSIResponsibilityScorer(trigger=trigger)
     cdag_scorer = CDAGResponsibilityScorer.build(
-        adapter, baseline_X=X_pre[:20000], feature_names=ds.feature_names, baseline_f1=bf1,
-        k_overrides={"layer1": cfg.cdag.layer_1_clusters, "layer2": cfg.cdag.layer_2_clusters}, window_size=512)
-    gnn_scorer = GNNResponsibilityScorer.build(
-        adapter=adapter, baseline_X=X_pre[:20000], feature_names=ds.feature_names, baseline_f1=bf1,
+        adapter,
+        baseline_X=X_pre[:20000],
+        feature_names=ds.feature_names,
+        baseline_f1=bf1,
         k_overrides={"layer1": cfg.cdag.layer_1_clusters, "layer2": cfg.cdag.layer_2_clusters},
-        window_size=512, gnn_cfg=GNNConfig())
+        window_size=512,
+    )
+    gnn_scorer = GNNResponsibilityScorer.build(
+        adapter=adapter,
+        baseline_X=X_pre[:20000],
+        feature_names=ds.feature_names,
+        baseline_f1=bf1,
+        k_overrides={"layer1": cfg.cdag.layer_1_clusters, "layer2": cfg.cdag.layer_2_clusters},
+        window_size=512,
+        gnn_cfg=GNNConfig(),
+    )
     samples = generate_sandbox_dataset(
-        adapter=adapter, tap=gnn_scorer.tap, node_set=gnn_scorer.node_set,
-        baseline_means=gnn_scorer.baseline_means, baseline_stds=gnn_scorer.baseline_stds,
-        baseline_stream_X=X_stream, baseline_stream_y=y_stream, feature_names=ds.feature_names,
-        n_samples=args.gnn_samples, window_size=512, seed=0, device=dev)
-    train_gnn(gnn_scorer.model, samples, cfg=GNNTrainConfig(lr=3e-3, epochs=args.gnn_epochs), device=dev)
+        adapter=adapter,
+        tap=gnn_scorer.tap,
+        node_set=gnn_scorer.node_set,
+        baseline_means=gnn_scorer.baseline_means,
+        baseline_stds=gnn_scorer.baseline_stds,
+        baseline_stream_X=X_stream,
+        baseline_stream_y=y_stream,
+        feature_names=ds.feature_names,
+        n_samples=args.gnn_samples,
+        window_size=512,
+        seed=0,
+        device=dev,
+    )
+    train_gnn(
+        gnn_scorer.model, samples, cfg=GNNTrainConfig(lr=3e-3, epochs=args.gnn_epochs), device=dev
+    )
     log.info("setup_done", baseline_f1=round(bf1, 4), n_samples=len(samples))
 
     scorer_names = ["psi", "grad", "perm", "cdag_structural", "gnn_learned"]
@@ -160,25 +204,43 @@ def main(argv=None) -> int:
             for name in scorer_names:
                 sc = np.asarray(all_scores[name], dtype=float)
                 r = _rank_of(sc, gt)
-                rows.append({"scorer": name, "scenario": scenario.name, "seed": seed,
-                             "subset": "hard" if scenario.name in HARD else "easy",
-                             "rank": r, "top1": int(r == 1), "mrr": 1.0/r, "auroc": _auroc(sc, gt)})
+                rows.append(
+                    {
+                        "scorer": name,
+                        "scenario": scenario.name,
+                        "seed": seed,
+                        "subset": "hard" if scenario.name in HARD else "easy",
+                        "rank": r,
+                        "top1": int(r == 1),
+                        "mrr": 1.0 / r,
+                        "auroc": _auroc(sc, gt),
+                    }
+                )
             log.info("e9_cell", scenario=scenario.name, seed=seed)
 
     def agg(name, subset=None):
         r = [x for x in rows if x["scorer"] == name and (subset is None or x["subset"] == subset)]
-        return {"n": len(r), "top1": _ms([x["top1"] for x in r]),
-                "mrr": _ms([x["mrr"] for x in r]), "auroc": _ms([x["auroc"] for x in r])}
+        return {
+            "n": len(r),
+            "top1": _ms([x["top1"] for x in r]),
+            "mrr": _ms([x["mrr"] for x in r]),
+            "auroc": _ms([x["auroc"] for x in r]),
+        }
 
     def wilcox(a, b, subset, metric):
         keys = sorted({(x["scenario"], x["seed"]) for x in rows if x["subset"] == subset})
         av, bv = [], []
         for scen, sd in keys:
-            ax = next(x for x in rows if x["scorer"] == a and x["scenario"] == scen and x["seed"] == sd)
-            bx = next(x for x in rows if x["scorer"] == b and x["scenario"] == scen and x["seed"] == sd)
+            ax = next(
+                x for x in rows if x["scorer"] == a and x["scenario"] == scen and x["seed"] == sd
+            )
+            bx = next(
+                x for x in rows if x["scorer"] == b and x["scenario"] == scen and x["seed"] == sd
+            )
             if np.isnan(ax[metric]) or np.isnan(bx[metric]):
                 continue
-            av.append(ax[metric]); bv.append(bx[metric])
+            av.append(ax[metric])
+            bv.append(bx[metric])
         try:
             _, pv = sci_stats.wilcoxon(av, bv, alternative="greater")
             return {"p": float(pv), "n": len(av)}
@@ -186,13 +248,18 @@ def main(argv=None) -> int:
             return {"p": None, "err": str(e), "n": len(av)}
 
     summary = {
-        "experiment": "E9_attribution_baselines", "seeds": args.seeds,
-        "aggregates": {sub: {name: agg(name, sub) for name in scorer_names} for sub in ("hard", "easy")},
+        "experiment": "E9_attribution_baselines",
+        "seeds": args.seeds,
+        "aggregates": {
+            sub: {name: agg(name, sub) for name in scorer_names} for sub in ("hard", "easy")
+        },
         "aggregate_all": {name: agg(name) for name in scorer_names},
         "wilcoxon_gnn_greater_hard": {
             b: {m: wilcox("gnn_learned", b, "hard", m) for m in ("mrr", "auroc")}
-            for b in ("psi", "grad", "perm", "cdag_structural")},
-        "rows": rows, "config": vars(args),
+            for b in ("psi", "grad", "perm", "cdag_structural")
+        },
+        "rows": rows,
+        "config": vars(args),
     }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:

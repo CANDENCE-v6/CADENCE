@@ -8,10 +8,9 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-
 from cadence.data.disjoint import make_disjoint_split
+
 from cadence.executor import (
-    DiffuseFallbackConfig,
     EscalationConfig,
     EscalationDecision,
     EscalationLadder,
@@ -25,7 +24,6 @@ from cadence.executor import (
     is_false_alarm,
     resource_fallback,
 )
-
 
 # ---------- §4.4 diffuse-responsibility fallback ----------
 

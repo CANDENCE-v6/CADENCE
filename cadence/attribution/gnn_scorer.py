@@ -22,7 +22,7 @@ Pipeline at pretrain time:
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import numpy as np
 import torch
@@ -86,7 +86,6 @@ def train_gnn(
     idx = np.arange(len(samples))
     rng.shuffle(idx)
     n_val = max(1, int(cfg.val_frac * len(idx)))
-    val_idx = set(idx[:n_val].tolist())
     train_idx = [int(i) for i in idx[n_val:]]
     val_idx_list = [int(i) for i in idx[:n_val]]
 
@@ -101,7 +100,7 @@ def train_gnn(
         # Simple manual mini-batching: one graph per optimizer step to keep
         # things predictable on tiny graphs. PyG's Batch could bundle multiple
         # graphs, but each graph is O(40 nodes) so per-step overhead is fine.
-        for j, i in enumerate(loader_idx):
+        for i in loader_idx:
             s = samples[i]
             data: Data = s.data
             if train:
@@ -209,7 +208,7 @@ class GNNResponsibilityScorer:
         k_overrides: dict[str, int] | None = None,
         window_size: int = 512,
         gnn_cfg: GNNConfig | None = None,
-    ) -> "GNNResponsibilityScorer":
+    ) -> GNNResponsibilityScorer:
         """Build node-set + tap on baseline data; instantiate an untrained GNN.
         The caller invokes `train_gnn(...)` next.
         """

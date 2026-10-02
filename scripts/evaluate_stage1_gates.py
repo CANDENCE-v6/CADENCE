@@ -32,11 +32,9 @@ import argparse
 import json
 import re
 import statistics
-import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
-
 
 LEDGER_PATH = Path("experiments/gate_a_ledger.json")
 DEFAULT_LOG = Path("logs/stage1_w38fix.log")
@@ -149,15 +147,18 @@ def _gate_g7_policy_independence(ledger: dict[str, Any]) -> GateResult:
     doing real work). Cross-seed F1 spread is reported as a diagnostic, not a
     pass/fail bar.
     """
-    from pathlib import Path as _P
 
-    thresh = ("independent per-seed policy artifacts exist (1 checkpoint/seed) "
-              "and are non-degenerate; F1 spread reported as diagnostic")
+    thresh = (
+        "independent per-seed policy artifacts exist (1 checkpoint/seed) "
+        "and are non-degenerate; F1 spread reported as diagnostic"
+    )
     seeds = ledger.get("stages", {}).get("1", {}).get("seeds", [])
     completed = [s for s in seeds if s.get("status") == "COMPLETED"]
     if len(completed) < 2:
         return GateResult(
-            "G7", "TBD", thresh,
+            "G7",
+            "TBD",
+            thresh,
             f"only {len(completed)} COMPLETED seed(s); need >=2",
             evidence={"completed_seeds": len(completed)},
         )
@@ -165,7 +166,7 @@ def _gate_g7_policy_independence(ledger: dict[str, Any]) -> GateResult:
     n_ckpts = 0
     ckpt_sizes: list[int] = []
     for s in completed:
-        ck = _P(f"experiments/rso_ppo_phase_a_seed{s['seed']}.zip")
+        ck = Path(f"experiments/rso_ppo_phase_a_seed{s['seed']}.zip")
         if ck.exists():
             n_ckpts += 1
             ckpt_sizes.append(ck.stat().st_size)
@@ -173,8 +174,11 @@ def _gate_g7_policy_independence(ledger: dict[str, Any]) -> GateResult:
     seed_means: list[float] = []
     for entry in completed:
         m = entry.get("metrics") or {}
-        f1s = [v.get("rso_mean_f1") for v in m.values()
-               if isinstance(v, dict) and v.get("rso_mean_f1") is not None]
+        f1s = [
+            v.get("rso_mean_f1")
+            for v in m.values()
+            if isinstance(v, dict) and v.get("rso_mean_f1") is not None
+        ]
         if f1s:
             seed_means.append(statistics.fmean(f1s))
     f1_std = statistics.pstdev(seed_means) if len(seed_means) >= 2 else float("nan")
@@ -186,8 +190,12 @@ def _gate_g7_policy_independence(ledger: dict[str, Any]) -> GateResult:
         thresh,
         f"{n_ckpts}/{len(completed)} independent per-seed checkpoints present; "
         f"diagnostic cross-seed F1 std = {f1_std:.4f} (reported, not gated)",
-        evidence={"n_checkpoints": n_ckpts, "checkpoint_sizes": ckpt_sizes,
-                  "diagnostic_f1_std": f1_std, "seed_means": seed_means},
+        evidence={
+            "n_checkpoints": n_ckpts,
+            "checkpoint_sizes": ckpt_sizes,
+            "diagnostic_f1_std": f1_std,
+            "seed_means": seed_means,
+        },
     )
 
 
@@ -285,6 +293,7 @@ def _stage1_runs(
     )
     if ledger is not None and "created" in ledger:
         from datetime import datetime
+
         try:
             ledger_start_utc = datetime.fromisoformat(ledger["created"].replace("Z", "+00:00"))
             ledger_start_ms = int(ledger_start_utc.timestamp() * 1000)
@@ -307,7 +316,7 @@ def _last30pct_mean(seq: list[tuple[int, float]]) -> float | None:
     if not seq:
         return None
     n = len(seq)
-    tail = seq[int(0.7 * n):] or seq[-max(1, n // 3):]
+    tail = seq[int(0.7 * n) :] or seq[-max(1, n // 3) :]
     return statistics.fmean(v for _, v in tail)
 
 
@@ -335,9 +344,10 @@ def _gate_g1_no_action_collapse(client, runs) -> GateResult:
     per_run = _per_run_last30_metric(client, runs, "action/max_pct")
     if not per_run:
         return _gate_g_mlflow_stub(
-            "G1", thresh,
+            "G1",
+            thresh,
             "no `action/max_pct` metric found in any Stage-1 run "
-            "(requires W-40 RewardComponentCallback wiring live)."
+            "(requires W-40 RewardComponentCallback wiring live).",
         )
     worst = max(v for _, v in per_run)
     passes = worst <= 0.85
@@ -366,9 +376,10 @@ def _gate_g2_entropy(client, runs) -> GateResult:
             per_run.append(-entropy_loss_mean)  # invert sign
     if not per_run:
         return _gate_g_mlflow_stub(
-            "G2", thresh,
+            "G2",
+            thresh,
             "no `ppo/train/entropy_loss` metric found in any Stage-1 run "
-            "(requires SB3 built-in logger + MLflowCallback wiring live)."
+            "(requires SB3 built-in logger + MLflowCallback wiring live).",
         )
     worst = min(per_run)
     passes = worst >= 0.15
@@ -382,8 +393,10 @@ def _gate_g2_entropy(client, runs) -> GateResult:
 
 
 def _gate_g3_reward_increases(client, runs) -> GateResult:
-    thresh = ("per-run rolling mean episode return (last 30%) > (first 30%) "
-              "by >= 0.10, and improvement not driven only by SLA-penalty component")
+    thresh = (
+        "per-run rolling mean episode return (last 30%) > (first 30%) "
+        "by >= 0.10, and improvement not driven only by SLA-penalty component"
+    )
     per_run_delta: list[float] = []
     per_run_sla_share: list[float] = []
     used_fallback = False
@@ -395,8 +408,12 @@ def _gate_g3_reward_increases(client, runs) -> GateResult:
             # Reconstruct an episode-return proxy from the reward components the
             # RewardComponentCallback logs: return ~ delta_f1 - cost - sla_penalty.
             df1 = _metric_history(client, r.info.run_id, "reward/delta_f1_avg")
-            cost = {s: v for s, v in _metric_history(client, r.info.run_id, "reward/cost_penalty_avg")}
-            sla = {s: v for s, v in _metric_history(client, r.info.run_id, "reward/sla_penalty_avg")}
+            cost = {
+                s: v for s, v in _metric_history(client, r.info.run_id, "reward/cost_penalty_avg")
+            }
+            sla = {
+                s: v for s, v in _metric_history(client, r.info.run_id, "reward/sla_penalty_avg")
+            }
             if df1:
                 hist = [(s, v - cost.get(s, 0.0) - sla.get(s, 0.0)) for s, v in df1]
                 used_fallback = True
@@ -414,9 +431,10 @@ def _gate_g3_reward_increases(client, runs) -> GateResult:
         per_run_sla_share.append(share)
     if not per_run_delta:
         return _gate_g_mlflow_stub(
-            "G3", thresh,
+            "G3",
+            thresh,
             "no `ppo/rollout/ep_rew_mean` history and no reward-component "
-            "fallback available in any Stage-1 run."
+            "fallback available in any Stage-1 run.",
         )
     worst_delta = min(per_run_delta)
     # The absolute >=0.10 bar was calibrated for raw ep_rew_mean; the
@@ -430,14 +448,18 @@ def _gate_g3_reward_increases(client, runs) -> GateResult:
     sla_gaming_flag = max_sla_share > 0.99
     verdict = "PASS" if (passes_delta and not sla_gaming_flag) else "FAIL"
     return GateResult(
-        "G3", verdict, thresh,
+        "G3",
+        verdict,
+        thresh,
         f"worst-run reward delta = {worst_delta:+.4f} across {len(per_run_delta)} runs "
         f"(bar={delta_bar}, {'reward-component fallback' if used_fallback else 'ep_rew_mean'}); "
         f"max SLA-share of penalty = {max_sla_share:.3f}"
         + (" (SLA-gaming flag)" if sla_gaming_flag else ""),
-        evidence={"per_run_reward_delta": per_run_delta,
-                  "per_run_sla_share_last30": per_run_sla_share,
-                  "used_fallback": used_fallback},
+        evidence={
+            "per_run_reward_delta": per_run_delta,
+            "per_run_sla_share_last30": per_run_sla_share,
+            "used_fallback": used_fallback,
+        },
     )
 
 
@@ -459,8 +481,7 @@ def _gate_g4_cost_live(client, runs) -> GateResult:
     per_run = _per_run_last30_metric(client, runs, "reward/cost_penalty_avg")
     if not per_run:
         return _gate_g_mlflow_stub(
-            "G4", thresh,
-            "no `reward/cost_penalty_avg` metric found (W-40 wiring)."
+            "G4", thresh, "no `reward/cost_penalty_avg` metric found (W-40 wiring)."
         )
     worst = min(v for _, v in per_run)
     passes = worst > 1e-8
@@ -470,14 +491,18 @@ def _gate_g4_cost_live(client, runs) -> GateResult:
         thresh,
         f"worst-run last-30% cost_penalty_avg = {worst:.3e} across {len(per_run)} runs "
         f"(> 0 => cost term live and policy retrains)",
-        evidence={"per_run_last30_cost_penalty": [v for _, v in per_run],
-                  "note": "amended from the ill-posed >=1%-of-delta_f1 ratio; see Amendment 2"},
+        evidence={
+            "per_run_last30_cost_penalty": [v for _, v in per_run],
+            "note": "amended from the ill-posed >=1%-of-delta_f1 ratio; see Amendment 2",
+        },
     )
 
 
 def _gate_g5_not_sla_gaming(client, runs) -> GateResult:
-    thresh = ("both cost_penalty AND sla_penalty shrink from first-30% to "
-              "last-30% (i.e. RSO isn't retraining ALL the time to game SLA)")
+    thresh = (
+        "both cost_penalty AND sla_penalty shrink from first-30% to "
+        "last-30% (i.e. RSO isn't retraining ALL the time to game SLA)"
+    )
     per_run_cost_shrink: list[bool] = []
     per_run_sla_shrink: list[bool] = []
     for r in runs:
@@ -493,8 +518,7 @@ def _gate_g5_not_sla_gaming(client, runs) -> GateResult:
         per_run_sla_shrink.append(sla_last <= sla_first)
     if not per_run_cost_shrink:
         return _gate_g_mlflow_stub(
-            "G5", thresh,
-            "no `reward/{cost,sla}_penalty_avg` metrics found (W-40 wiring)."
+            "G5", thresh, "no `reward/{cost,sla}_penalty_avg` metrics found (W-40 wiring)."
         )
     all_shrink = all(per_run_cost_shrink) and all(per_run_sla_shrink)
     return GateResult(
@@ -525,12 +549,15 @@ def evaluate(log_path: Path = DEFAULT_LOG) -> list[GateResult]:
             ("G4", "|cost_penalty|/|delta_f1| on last 30% >= 0.01"),
             ("G5", "cost_penalty and sla_penalty both shrink over training"),
         ]:
-            results.append(_gate_g_mlflow_stub(
-                gate, desc,
-                f"no runs found in MLflow experiment 'cadence-gate-a' at "
-                f"{DEFAULT_MLFLOW_URI} — is Stage 1 finished and did phase_a_run "
-                f"log to this URI?"
-            ))
+            results.append(
+                _gate_g_mlflow_stub(
+                    gate,
+                    desc,
+                    f"no runs found in MLflow experiment 'cadence-gate-a' at "
+                    f"{DEFAULT_MLFLOW_URI} — is Stage 1 finished and did phase_a_run "
+                    f"log to this URI?",
+                )
+            )
     else:
         results.append(_gate_g1_no_action_collapse(client, runs))
         results.append(_gate_g2_entropy(client, runs))
@@ -541,10 +568,12 @@ def evaluate(log_path: Path = DEFAULT_LOG) -> list[GateResult]:
     # G6-G8: computable from log + ledger directly.
     results.append(_gate_g6_lambda_max(dual_updates))
     if ledger is None:
-        results.append(GateResult("G7", "TBD", "cross-seed reward std >= 0.02",
-                                  "ledger missing", evidence={}))
-        results.append(GateResult("G8", "TBD", "3 seeds COMPLETED, wall <= 4h",
-                                  "ledger missing", evidence={}))
+        results.append(
+            GateResult("G7", "TBD", "cross-seed reward std >= 0.02", "ledger missing", evidence={})
+        )
+        results.append(
+            GateResult("G8", "TBD", "3 seeds COMPLETED, wall <= 4h", "ledger missing", evidence={})
+        )
     else:
         results.append(_gate_g7_policy_independence(ledger))
         results.append(_gate_g8_budget(ledger))
@@ -584,10 +613,15 @@ def print_report(results: list[GateResult]) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--log", type=Path, default=DEFAULT_LOG,
-                        help=f"Stage 1 log path (default: {DEFAULT_LOG})")
-    parser.add_argument("--report-out", type=Path, default=REPORT_PATH,
-                        help=f"Where to write JSON report (default: {REPORT_PATH})")
+    parser.add_argument(
+        "--log", type=Path, default=DEFAULT_LOG, help=f"Stage 1 log path (default: {DEFAULT_LOG})"
+    )
+    parser.add_argument(
+        "--report-out",
+        type=Path,
+        default=REPORT_PATH,
+        help=f"Where to write JSON report (default: {REPORT_PATH})",
+    )
     args = parser.parse_args(argv)
 
     results = evaluate(log_path=args.log)
@@ -595,12 +629,17 @@ def main(argv: list[str] | None = None) -> int:
 
     args.report_out.parent.mkdir(parents=True, exist_ok=True)
     with args.report_out.open("w", encoding="utf-8") as f:
-        json.dump({
-            "gates": [r.as_dict() for r in results],
-            "log_path": str(args.log),
-            "ledger_path": str(LEDGER_PATH),
-            "mlflow_uri": DEFAULT_MLFLOW_URI,
-        }, f, indent=2, default=str)
+        json.dump(
+            {
+                "gates": [r.as_dict() for r in results],
+                "log_path": str(args.log),
+                "ledger_path": str(LEDGER_PATH),
+                "mlflow_uri": DEFAULT_MLFLOW_URI,
+            },
+            f,
+            indent=2,
+            default=str,
+        )
     print(f"Report written to {args.report_out}")
 
     if any(r.verdict == "FAIL" for r in results):

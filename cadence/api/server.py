@@ -28,7 +28,6 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -56,7 +55,7 @@ class ScoreResponse(BaseModel):
 
 class MonitorRequest(BaseModel):
     rows: list[list[float]] = Field(..., description="Window of feature vectors to monitor")
-    y: Optional[list[int]] = Field(
+    y: list[int] | None = Field(
         default=None, description="Optional labels (enables delayed-label F1 check)"
     )
 
@@ -64,13 +63,13 @@ class MonitorRequest(BaseModel):
 class MonitorResponse(BaseModel):
     psi_per_feature: list[float]
     psi_alert_fired: bool
-    delayed_f1: Optional[float]
+    delayed_f1: float | None
     top_k_features: list[dict]
 
 
 class DecideRequest(BaseModel):
     rows: list[list[float]] = Field(..., description="Window that just fired the trigger")
-    y: Optional[list[int]] = Field(default=None, description="Labels for post-hoc F1")
+    y: list[int] | None = Field(default=None, description="Labels for post-hoc F1")
     sla_target: float = Field(default=0.65, description="Effective SLA threshold on F1")
 
 
@@ -111,7 +110,9 @@ STATE = ServiceState()
 def _admin_auth(token: str = Depends(APIKeyHeader(name="X-Admin-Token", auto_error=False))) -> None:
     expected = os.environ.get("CADENCE_API_ADMIN_TOKEN")
     if expected is None or expected == "":
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "admin routes disabled — set CADENCE_API_ADMIN_TOKEN")
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, "admin routes disabled — set CADENCE_API_ADMIN_TOKEN"
+        )
     if token != expected:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "invalid admin token")
 
@@ -133,9 +134,7 @@ def health() -> HealthResponse:
         adapter_family=STATE.adapter.family if STATE.adapter else None,
         adapter_input_dim=(STATE.adapter.cfg.input_dim if STATE.adapter else None),
         policy_loaded=STATE.policy is not None,
-        policy_obs_dim=(
-            int(STATE.policy.observation_space.shape[0]) if STATE.policy else None
-        ),
+        policy_obs_dim=(int(STATE.policy.observation_space.shape[0]) if STATE.policy else None),
         checkpoint_path=STATE.checkpoint_path,
     )
 
@@ -264,9 +263,13 @@ def decide(req: DecideRequest) -> DecideResponse:
     else:
         flops = STATE.adapter.flops_per_forward()
         if action_int == 1:
-            cost = estimate_cost(flops, X.shape[0], 5, hardware=HardwareProfile(), grid=GridProfile())
+            cost = estimate_cost(
+                flops, X.shape[0], 5, hardware=HardwareProfile(), grid=GridProfile()
+            )
         elif action_int == 2:
-            cost = estimate_cost(flops, X.shape[0] + 20000, 15, hardware=HardwareProfile(), grid=GridProfile())
+            cost = estimate_cost(
+                flops, X.shape[0] + 20000, 15, hardware=HardwareProfile(), grid=GridProfile()
+            )
         else:
             cost = None
         gpu_hr = (cost.gpu_seconds / 3600.0) if cost is not None else 0.0
@@ -283,10 +286,10 @@ def decide(req: DecideRequest) -> DecideResponse:
 
 
 class ReloadRequest(BaseModel):
-    adapter_ckpt: Optional[str] = None
-    policy_ckpt: Optional[str] = None
-    baseline_X: Optional[list[list[float]]] = None
-    feature_names: Optional[list[str]] = None
+    adapter_ckpt: str | None = None
+    policy_ckpt: str | None = None
+    baseline_X: list[list[float]] | None = None
+    feature_names: list[str] | None = None
 
 
 @app.post("/admin/reload", dependencies=[Depends(_admin_auth)])

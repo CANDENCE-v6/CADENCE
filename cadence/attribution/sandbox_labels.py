@@ -22,14 +22,11 @@ in memory as a list of PyG `Data` objects on GPU.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 import numpy as np
 import torch
-from sklearn.metrics import f1_score
-from torch_geometric.data import Data
-
 from benchmarks.synthetic_drift_gen import (
     ConceptShiftSpec,
     DriftInjector,
@@ -37,6 +34,9 @@ from benchmarks.synthetic_drift_gen import (
     DriftSchedule,
     FeatureShiftSpec,
 )
+from sklearn.metrics import f1_score
+from torch_geometric.data import Data
+
 from cadence.adapters.base import ModelAdapter
 from cadence.attribution.gnn import cdag_to_pyg_data
 from cadence.cdag import (

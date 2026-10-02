@@ -20,8 +20,6 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-import pytest
-
 
 def _make_callback_at_num_timesteps(monkeypatch, num_timesteps: int):
     """Instantiate RewardComponentCallback and set num_timesteps to trigger flush."""
@@ -76,7 +74,6 @@ def test_reward_component_callback_flushes_expected_metric_names(monkeypatch) ->
     }
     logged_names = {call.args[0] for call in mock_log.call_args_list}
     missing = expected_names - logged_names
-    extra_action = {n for n in logged_names if n.startswith("action/")} - expected_names
     assert not missing, f"callback missed metric names: {sorted(missing)}"
     # Verify the numerical semantics gate evaluator relies on:
     logged_map = {call.args[0]: call.args[1] for call in mock_log.call_args_list}

@@ -83,7 +83,10 @@ def test_dual_lambda_grows_when_policy_violates_sla() -> None:
 def test_dual_lambda_never_exceeds_max_or_drops_below_min() -> None:
     env = _make_env()
     wrapped = AugmentedLagrangianEnv(
-        env, cfg=AugmentedLagrangianConfig(lambda_init=50.0, lambda_max=60.0, lambda_min=1.0, dual_lr=10_000.0)
+        env,
+        cfg=AugmentedLagrangianConfig(
+            lambda_init=50.0, lambda_max=60.0, lambda_min=1.0, dual_lr=10_000.0
+        ),
     )
     for _ in range(3):
         wrapped.reset()

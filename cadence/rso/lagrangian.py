@@ -109,13 +109,16 @@ class AugmentedLagrangianEnv(gym.Wrapper):
         if self._episode_violations:
             mean_v = float(np.mean(self._episode_violations))
             self._ema_violation = (
-                self._cfg.ema_beta * self._ema_violation
-                + (1 - self._cfg.ema_beta) * mean_v
+                self._cfg.ema_beta * self._ema_violation + (1 - self._cfg.ema_beta) * mean_v
             )
             # Dual gradient step.
             grad = self._ema_violation - self._cfg.target_violation
             self._lambda = float(
-                np.clip(self._lambda + self._cfg.dual_lr * grad, self._cfg.lambda_min, self._cfg.lambda_max)
+                np.clip(
+                    self._lambda + self._cfg.dual_lr * grad,
+                    self._cfg.lambda_min,
+                    self._cfg.lambda_max,
+                )
             )
             self.env.cfg.lambda_sla = self._lambda
             self.lambda_history.append(self._lambda)

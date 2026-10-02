@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+
 from cadence.attribution import CDAGResponsibilityScorer
 from cadence.cdag import (
     ActivationTap,

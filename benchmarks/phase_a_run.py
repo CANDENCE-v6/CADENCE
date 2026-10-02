@@ -32,8 +32,6 @@ from pathlib import Path
 
 import mlflow
 import numpy as np
-from scipy import stats as sci_stats
-
 from benchmarks.baselines import (
     BaselineRunConfig,
     EWCOnlyStrategy,
@@ -47,13 +45,15 @@ from benchmarks.synthetic_drift_gen import (
     build_step_a_scenarios,
 )
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.loaders import load_credit_card_fraud
+from scipy import stats as sci_stats
+
 from cadence.carbon.model import GridProfile, HardwareProfile
 from cadence.collector.drift_trigger import DriftTriggerConfig, PSITrigger
 from cadence.common.config import load_config
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
-from cadence.data.loaders import load_credit_card_fraud
 from cadence.rso.env import RetrainingSandboxEnv, SandboxConfig
 from cadence.rso.lagrangian import AugmentedLagrangianConfig, AugmentedLagrangianEnv
 from cadence.rso.ppo import (
@@ -100,53 +100,63 @@ def main(argv: list[str] | None = None) -> int:
         type=int,
         default=None,
         help="W-44 (R-Gate-A-stage1-fail-3, G7): window size for the RSO EVAL "
-             "sandbox, decoupled from --window-size (which stays small so PPO "
-             "training is fast, protecting G8). Larger eval windows carry more "
-             "positives, so per-scenario F1 is continuous rather than quantized "
-             "(0.933=14/15, 0.833=5/6, ...) — restoring measurable cross-seed "
-             "variance for gate G7. Defaults to --window-size when unset.",
+        "sandbox, decoupled from --window-size (which stays small so PPO "
+        "training is fast, protecting G8). Larger eval windows carry more "
+        "positives, so per-scenario F1 is continuous rather than quantized "
+        "(0.933=14/15, 0.833=5/6, ...) — restoring measurable cross-seed "
+        "variance for gate G7. Defaults to --window-size when unset.",
     )
     p.add_argument("--sla", type=float, default=0.65)
     p.add_argument("--train-timesteps", type=int, default=30_000)
     p.add_argument("--w-gpu-hr", type=float, default=0.05)
     p.add_argument("--w-kg-co2", type=float, default=0.5)
     p.add_argument("--lambda-init", type=float, default=1.0)
-    p.add_argument("--dual-lr", type=float, default=1.0,
-                   help="Augmented-Lagrangian dual learning rate. Calmed from 5.0 "
-                        "to 1.0 by W-39 after R-Gate-A-stage1-fail-1 (lambda "
-                        "saturated at 100.0 cap under the W-32 rescaled reward).")
+    p.add_argument(
+        "--dual-lr",
+        type=float,
+        default=1.0,
+        help="Augmented-Lagrangian dual learning rate. Calmed from 5.0 "
+        "to 1.0 by W-39 after R-Gate-A-stage1-fail-1 (lambda "
+        "saturated at 100.0 cap under the W-32 rescaled reward).",
+    )
     p.add_argument("--ewc-penalty", type=float, default=1000.0)
-    p.add_argument("--contested-only", action="store_true",
-                   help="Restrict eval to just the 3 contested-SLA scenarios.")
-    p.add_argument("--train-only", action="store_true",
-                   help="Train PPO + save checkpoint, then skip the (expensive) eval loop. "
-                        "Used to close W-28 without waiting for paper-fidelity baselines.")
+    p.add_argument(
+        "--contested-only",
+        action="store_true",
+        help="Restrict eval to just the 3 contested-SLA scenarios.",
+    )
+    p.add_argument(
+        "--train-only",
+        action="store_true",
+        help="Train PPO + save checkpoint, then skip the (expensive) eval loop. "
+        "Used to close W-28 without waiting for paper-fidelity baselines.",
+    )
     p.add_argument(
         "--per-seed-policies",
         action="store_true",
         help="W-36 fix: train an independent PPO policy per seed inside the seed loop. "
-             "Default off preserves legacy behaviour (single seed=42 policy shared "
-             "across the eval seed loop = pseudoreplication). Turn on for any run "
-             "whose numbers feed a statistical claim.",
+        "Default off preserves legacy behaviour (single seed=42 policy shared "
+        "across the eval seed loop = pseudoreplication). Turn on for any run "
+        "whose numbers feed a statistical claim.",
     )
     p.add_argument(
         "--only-seed",
         type=int,
         default=None,
         help="Run only this single seed index (baselines + RSO). Used by "
-             "run_experiment.py to drive per-seed resumable execution — one "
-             "subprocess per seed so a kill loses at most one seed's work. "
-             "Overrides `--seeds` for loop iteration; keep --seeds set to any "
-             "positive value for argument parity.",
+        "run_experiment.py to drive per-seed resumable execution — one "
+        "subprocess per seed so a kill loses at most one seed's work. "
+        "Overrides `--seeds` for loop iteration; keep --seeds set to any "
+        "positive value for argument parity.",
     )
     p.add_argument(
         "--skip-baselines",
         action="store_true",
         help="W-42: skip the 3 full-fidelity baselines (PSI+full/fixed/EWC-only). "
-             "The Stage-1 diagnostic protocol (pre-reg Part 1) is explicitly "
-             "'No baselines' — they belong to Stage 2. Skipping them removes "
-             "~2.4h/seed of wall time (gate G8) and is pre-reg-compliant for "
-             "Stage 1. The RSO's own eval still runs, so gate G7 keeps its data.",
+        "The Stage-1 diagnostic protocol (pre-reg Part 1) is explicitly "
+        "'No baselines' — they belong to Stage 2. Skipping them removes "
+        "~2.4h/seed of wall time (gate G8) and is pre-reg-compliant for "
+        "Stage 1. The RSO's own eval still runs, so gate G7 keeps its data.",
     )
     p.add_argument("--out", default="experiments/phase_a_summary.json")
     args = p.parse_args(argv)
@@ -270,9 +280,7 @@ def main(argv: list[str] | None = None) -> int:
         # here (before the scenario loop), then reused across every scenario.
         # --only-seed narrows to a single seed for subprocess-per-seed execution
         # driven by run_experiment.py.
-        seeds_iter = (
-            [args.only_seed] if args.only_seed is not None else list(range(args.seeds))
-        )
+        seeds_iter = [args.only_seed] if args.only_seed is not None else list(range(args.seeds))
 
         model = None  # legacy single shared policy (per_seed_policies=False)
         models_by_seed: dict[int, object] = {}
@@ -469,9 +477,7 @@ def main(argv: list[str] | None = None) -> int:
         print("\n=== Gate A results ===")
         for scen_name, entry in summary["scenarios"].items():
             print(f"\n[{scen_name}]")
-            print(
-                f"  {'strategy':<20}{'mean_f1':>18}{'gpu_hr':>18}{'kg_co2':>18}{'sla_below':>12}"
-            )
+            print(f"  {'strategy':<20}{'mean_f1':>18}{'gpu_hr':>18}{'kg_co2':>18}{'sla_below':>12}")
             for strat_name, a in entry["aggregates"].items():
                 print(
                     f"  {strat_name:<20}"

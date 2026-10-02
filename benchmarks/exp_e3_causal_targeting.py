@@ -46,14 +46,14 @@ from pathlib import Path
 import numpy as np
 import torch
 import torch.nn as nn
+from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.mnist_splits import load_split_mnist
 from scipy import stats as sci_stats
 from sklearn.metrics import f1_score
 
-from cadence.adapters.neural import FraudNet, FraudNetConfig
 from cadence.common.device import get_device
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
-from cadence.data.mnist_splits import load_split_mnist
 
 log = get_logger("cadence.benchmarks.e3")
 
@@ -72,8 +72,7 @@ def _mean_std(vs):
     vs = list(vs)
     if not vs:
         return (0.0, 0.0)
-    return (float(statistics.fmean(vs)),
-            float(statistics.pstdev(vs)) if len(vs) > 1 else 0.0)
+    return (float(statistics.fmean(vs)), float(statistics.pstdev(vs)) if len(vs) > 1 else 0.0)
 
 
 def _psi(expected: np.ndarray, actual: np.ndarray, bins: int = 10) -> float:
@@ -88,8 +87,7 @@ def _psi(expected: np.ndarray, actual: np.ndarray, bins: int = 10) -> float:
     return float(np.sum((a - e) * np.log(a / e)))
 
 
-def _select_layer(method, adapter, hidden_layers, theta_star, fisher,
-                  Xa, ya, Xb, yb, rng) -> str:
+def _select_layer(method, adapter, hidden_layers, theta_star, fisher, Xa, ya, Xb, yb, rng) -> str:
     """Return the hidden-layer name each targeting method chooses."""
     if method == "random":
         return hidden_layers[rng.integers(0, len(hidden_layers))]
@@ -115,7 +113,7 @@ def _select_layer(method, adapter, hidden_layers, theta_star, fisher,
             for pname, p in mod.named_parameters():
                 if pname.split(".")[0] == lname and p.grad is not None:
                     g += float(p.grad.detach().pow(2).sum().item())
-            norms[lname] = g ** 0.5
+            norms[lname] = g**0.5
         mod.zero_grad(set_to_none=True)
         return max(norms, key=norms.get)
 
@@ -137,15 +135,31 @@ def _select_layer(method, adapter, hidden_layers, theta_star, fisher,
     raise ValueError(method)
 
 
-def _partial_retrain_forget(adapter_proto, baseline_state, threshold, hidden_layers,
-                            layer, fisher, theta_star, Xb, yb, Xa_test, ya_test,
-                            Xb_test, yb_test, pre_a_f1, ewc_penalty, epochs):
+def _partial_retrain_forget(
+    adapter_proto,
+    baseline_state,
+    threshold,
+    hidden_layers,
+    layer,
+    fisher,
+    theta_star,
+    Xb,
+    yb,
+    Xa_test,
+    ya_test,
+    Xb_test,
+    yb_test,
+    pre_a_f1,
+    ewc_penalty,
+    epochs,
+):
     """Clone -> EWC partial_fit on `layer` only -> return (forget, taskB_f1)."""
     ad = adapter_proto.clone()
     ad.load_state_dict({k: v.clone() for k, v in baseline_state.items()})
     ad.decision_threshold = threshold
     ad.partial_fit(
-        Xb, yb,
+        Xb,
+        yb,
         layers_to_update=[layer],
         ewc_penalty=ewc_penalty,
         fisher=fisher,
@@ -178,11 +192,18 @@ def main(argv=None) -> int:
     ta_te, tb_te = test_tasks
 
     def _new_adapter() -> FraudNet:
-        return FraudNet(FraudNetConfig(
-            input_dim=784, hidden_dims=list(args.hidden), dropout=0.2,
-            lr=1e-3, batch_size=128, max_epochs=15, early_stopping_patience=4,
-            class_weighted=True,
-        ))
+        return FraudNet(
+            FraudNetConfig(
+                input_dim=784,
+                hidden_dims=list(args.hidden),
+                dropout=0.2,
+                lr=1e-3,
+                batch_size=128,
+                max_epochs=15,
+                early_stopping_patience=4,
+                class_weighted=True,
+            )
+        )
 
     penalties = [float(x) for x in args.ewc_penalties]
     # forget[pen][method] = list over seeds ; same for taskb
@@ -211,8 +232,18 @@ def main(argv=None) -> int:
         # Layer choice per method is independent of the EWC penalty — pick once.
         picks = {}
         for m in ["random", "psi", "gradient", "cdag"]:
-            picks[m] = _select_layer(m, adapter, hidden_layers, theta_star, fisher,
-                                     ta_tr.X, ta_tr.y, tb_tr.X, tb_tr.y, rng)
+            picks[m] = _select_layer(
+                m,
+                adapter,
+                hidden_layers,
+                theta_star,
+                fisher,
+                ta_tr.X,
+                ta_tr.y,
+                tb_tr.X,
+                tb_tr.y,
+                rng,
+            )
             chosen[m].append(picks[m])
 
         # For each penalty, run every hidden layer ONCE, then map methods to their pick.
@@ -220,9 +251,23 @@ def main(argv=None) -> int:
             layer_res = {}
             for layer in hidden_layers:
                 layer_res[layer] = _partial_retrain_forget(
-                    adapter, baseline_state, threshold, hidden_layers, layer,
-                    fisher, theta_star, tb_tr.X, tb_tr.y, ta_te.X, ta_te.y,
-                    tb_te.X, tb_te.y, pre_a, pen, args.finetune_epochs)
+                    adapter,
+                    baseline_state,
+                    threshold,
+                    hidden_layers,
+                    layer,
+                    fisher,
+                    theta_star,
+                    tb_tr.X,
+                    tb_tr.y,
+                    ta_te.X,
+                    ta_te.y,
+                    tb_te.X,
+                    tb_te.y,
+                    pre_a,
+                    pen,
+                    args.finetune_epochs,
+                )
             for m in ["random", "psi", "gradient", "cdag"]:
                 f, b = layer_res[picks[m]]
                 forget[pen][m].append(f)
@@ -232,8 +277,9 @@ def main(argv=None) -> int:
             forget[pen]["oracle"].append(best[0])
             taskb[pen]["oracle"].append(best[1])
 
-        print(f"[seed {seed}] pre_A={pre_a:.3f} picks="
-              + ",".join(f"{m}:{picks[m]}" for m in picks))
+        print(
+            f"[seed {seed}] pre_A={pre_a:.3f} picks=" + ",".join(f"{m}:{picks[m]}" for m in picks)
+        )
 
         del adapter, fisher, theta_star
         gc.collect()
@@ -250,9 +296,14 @@ def main(argv=None) -> int:
     per_penalty = {}
     for pen in penalties:
         per_penalty[str(pen)] = {
-            "forgetting": {m: {"mean": _mean_std(forget[pen][m])[0],
-                               "std": _mean_std(forget[pen][m])[1],
-                               "values": forget[pen][m]} for m in TARGETING_METHODS},
+            "forgetting": {
+                m: {
+                    "mean": _mean_std(forget[pen][m])[0],
+                    "std": _mean_std(forget[pen][m])[1],
+                    "values": forget[pen][m],
+                }
+                for m in TARGETING_METHODS
+            },
             "task_b_f1": {m: _mean_std(taskb[pen][m]) for m in TARGETING_METHODS},
             "wilcoxon_cdag_forgets_less": {
                 "vs_random": _wilcoxon_less(forget[pen]["cdag"], forget[pen]["random"]),
@@ -263,10 +314,14 @@ def main(argv=None) -> int:
 
     summary = {
         "experiment": "E3_causal_targeting",
-        "seeds": args.seeds, "hidden": args.hidden, "ewc_penalties": penalties,
+        "seeds": args.seeds,
+        "hidden": args.hidden,
+        "ewc_penalties": penalties,
         "finetune_epochs": args.finetune_epochs,
         "pre_task_a_f1": _mean_std(pre_a_all),
-        "layer_choices": {m: {l: chosen[m].count(l) for l in set(chosen[m])} for m in chosen},
+        "layer_choices": {
+            m: {layer: chosen[m].count(layer) for layer in set(chosen[m])} for m in chosen
+        },
         "per_penalty": per_penalty,
         "config": vars(args),
     }
@@ -276,7 +331,7 @@ def main(argv=None) -> int:
 
     print("\n=== E3 Causal-targeting ablation (Split-MNIST, identical EWC per row) ===")
     print(f"Pre Task-A F1: {summary['pre_task_a_f1'][0]:.4f} +/- {summary['pre_task_a_f1'][1]:.4f}")
-    print(f"Layer picks: " + " | ".join(f"{m}:{summary['layer_choices'][m]}" for m in chosen))
+    print("Layer picks: " + " | ".join(f"{m}:{summary['layer_choices'][m]}" for m in chosen))
     for pen in penalties:
         pp = per_penalty[str(pen)]
         print(f"\n--- EWC penalty = {pen} ---")
@@ -286,7 +341,7 @@ def main(argv=None) -> int:
             tb = pp["task_b_f1"][m][0]
             pcell = ""
             if m in ("random", "psi", "gradient"):
-                pcell = f"{pp['wilcoxon_cdag_forgets_less']['vs_'+m].get('p')}"
+                pcell = f"{pp['wilcoxon_cdag_forgets_less']['vs_' + m].get('p')}"
             print(f"{m:<10}{fm:+.4f} +/- {fs:.4f}    {tb:.4f}      {pcell}")
     print(f"\nwrote {args.out}")
     return 0

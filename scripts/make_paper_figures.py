@@ -29,11 +29,9 @@ import statistics
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 
 FIG_DIR = Path("docs/paper/figures")
 DPI = 300
@@ -74,13 +72,20 @@ def fig_elec2_pareto() -> None:
         rows = raw[strat]
         f1s = [r["mean_f1"] for r in rows]
         ghs = [r["total_gpu_hr"] for r in rows]
-        ax.scatter(ghs, f1s, s=60, color=colors[strat], label=labels[strat],
-                   edgecolors="black", linewidths=0.5, zorder=3)
+        ax.scatter(
+            ghs,
+            f1s,
+            s=60,
+            color=colors[strat],
+            label=labels[strat],
+            edgecolors="black",
+            linewidths=0.5,
+            zorder=3,
+        )
         # 95% bootstrap CI cross for each strategy
         mf = statistics.fmean(f1s)
         mg = statistics.fmean(ghs)
-        ax.plot(mg, mf, marker="+", color=colors[strat], markersize=14,
-                markeredgewidth=2, zorder=4)
+        ax.plot(mg, mf, marker="+", color=colors[strat], markersize=14, markeredgewidth=2, zorder=4)
 
     ax.set_xscale("log")
     ax.set_xlabel("Total GPU-hours per episode (log scale)")
@@ -99,11 +104,14 @@ def fig_elec2_pareto() -> None:
     y0, y1 = ax.get_ylim()
     ax.set_ylim(y0, y1 + 0.30 * (y1 - y0))
     ax.annotate(
-        f"CADENCE saves {100*savings:.1f}% GPU\n"
-        f"for a {gap:+.3f} F1 gap",
-        xy=(rso_gpu, rso_f1), xycoords="data",
-        xytext=(0.03, 0.97), textcoords="axes fraction",
-        ha="left", va="top", fontsize=8.5,
+        f"CADENCE saves {100 * savings:.1f}% GPU\nfor a {gap:+.3f} F1 gap",
+        xy=(rso_gpu, rso_f1),
+        xycoords="data",
+        xytext=(0.03, 0.97),
+        textcoords="axes fraction",
+        ha="left",
+        va="top",
+        fontsize=8.5,
         bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="0.6", lw=0.6),
         arrowprops=dict(arrowstyle="->", color="black", lw=0.7),
     )
@@ -130,12 +138,12 @@ def fig_h1_subset() -> None:
     hard = [s for s, xs in psi_by_scenario.items() if statistics.fmean(xs) < 0.9]
 
     scorers = ("psi_stub", "cdag_structural", "gnn_learned")
-    scorer_labels = {"psi_stub": "PSI (correlational)",
-                     "cdag_structural": "CDAG-structural",
-                     "gnn_learned": "CDAG+GNN (ours)"}
-    scorer_colors = {"psi_stub": "#7f7f7f",
-                     "cdag_structural": "#ff7f0e",
-                     "gnn_learned": "#1f77b4"}
+    scorer_labels = {
+        "psi_stub": "PSI (correlational)",
+        "cdag_structural": "CDAG-structural",
+        "gnn_learned": "CDAG+GNN (ours)",
+    }
+    scorer_colors = {"psi_stub": "#7f7f7f", "cdag_structural": "#ff7f0e", "gnn_learned": "#1f77b4"}
     metrics = ("reciprocal_rank", "auroc")
     metric_labels = {"reciprocal_rank": "MRR", "auroc": "AUROC"}
 
@@ -150,18 +158,35 @@ def fig_h1_subset() -> None:
     fig, axes = plt.subplots(1, 2, figsize=(7.5, 3.6), sharey=True)
     x = np.arange(len(scorers))
     width = 0.35
-    for ax, metric in zip(axes, metrics):
+    for ax, metric in zip(axes, metrics, strict=True):
         easy_vals = [_agg(s, easy, metric) for s in scorers]
         hard_vals = [_agg(s, hard, metric) for s in scorers]
         for i, scorer in enumerate(scorers):
-            ax.bar(x[i] - width/2, easy_vals[i][0], width,
-                   yerr=easy_vals[i][1], color=scorer_colors[scorer], alpha=0.55,
-                   edgecolor="black", linewidth=0.6, capsize=3,
-                   label=f"{scorer_labels[scorer]} (EASY)" if metric == "reciprocal_rank" else None)
-            ax.bar(x[i] + width/2, hard_vals[i][0], width,
-                   yerr=hard_vals[i][1], color=scorer_colors[scorer], alpha=1.0,
-                   edgecolor="black", linewidth=0.6, capsize=3, hatch="//",
-                   label=f"{scorer_labels[scorer]} (HARD)" if metric == "reciprocal_rank" else None)
+            ax.bar(
+                x[i] - width / 2,
+                easy_vals[i][0],
+                width,
+                yerr=easy_vals[i][1],
+                color=scorer_colors[scorer],
+                alpha=0.55,
+                edgecolor="black",
+                linewidth=0.6,
+                capsize=3,
+                label=f"{scorer_labels[scorer]} (EASY)" if metric == "reciprocal_rank" else None,
+            )
+            ax.bar(
+                x[i] + width / 2,
+                hard_vals[i][0],
+                width,
+                yerr=hard_vals[i][1],
+                color=scorer_colors[scorer],
+                alpha=1.0,
+                edgecolor="black",
+                linewidth=0.6,
+                capsize=3,
+                hatch="//",
+                label=f"{scorer_labels[scorer]} (HARD)" if metric == "reciprocal_rank" else None,
+            )
         ax.set_xticks(x)
         ax.set_xticklabels(["PSI", "CDAG-\nstruct", "CDAG+\nGNN"], fontsize=9)
         ax.set_ylabel(metric_labels[metric])
@@ -170,9 +195,11 @@ def fig_h1_subset() -> None:
         ax.set_title(metric_labels[metric])
 
     axes[0].legend(loc="upper left", fontsize=7, framealpha=0.95)
-    fig.suptitle("H1 attribution: EASY (solid) vs HARD (hatched)\n"
-                 f"n=10 seeds; EASY = {len(easy)} sat. scenarios; HARD = {len(hard)} contested",
-                 fontsize=10)
+    fig.suptitle(
+        "H1 attribution: EASY (solid) vs HARD (hatched)\n"
+        f"n=10 seeds; EASY = {len(easy)} sat. scenarios; HARD = {len(hard)} contested",
+        fontsize=10,
+    )
     fig.tight_layout()
     _save(fig, "fig_h1_subset")
 
@@ -216,16 +243,26 @@ def fig_h3_mnist_forget() -> None:
         "full_naive_no_replay": "#d62728",
         "full_with_replay": "#ff7f0e",
     }
-    arms = [a for a in ("partial_ewc_layer1", "full_naive_no_replay", "full_with_replay") if a in per_seed]
+    arms = [
+        a
+        for a in ("partial_ewc_layer1", "full_naive_no_replay", "full_with_replay")
+        if a in per_seed
+    ]
 
     fig, ax = plt.subplots(figsize=(5.0, 3.8))
     positions = np.arange(len(arms))
     box_data = [per_seed[a] for a in arms]
-    bp = ax.boxplot(box_data, positions=positions, widths=0.55, patch_artist=True,
-                    showmeans=True, meanline=True,
-                    medianprops=dict(color="black", linewidth=1.4),
-                    meanprops=dict(color="black", linewidth=1.2, linestyle=":"))
-    for patch, arm in zip(bp["boxes"], arms):
+    bp = ax.boxplot(
+        box_data,
+        positions=positions,
+        widths=0.55,
+        patch_artist=True,
+        showmeans=True,
+        meanline=True,
+        medianprops=dict(color="black", linewidth=1.4),
+        meanprops=dict(color="black", linewidth=1.2, linestyle=":"),
+    )
+    for patch, arm in zip(bp["boxes"], arms, strict=True):
         patch.set_facecolor(colors[arm])
         patch.set_alpha(0.6)
         patch.set_edgecolor("black")
@@ -241,8 +278,10 @@ def fig_h3_mnist_forget() -> None:
     ax.set_xticks(positions)
     ax.set_xticklabels([labels[a] for a in arms], fontsize=9)
     ax.set_ylabel("Task-A forgetting Δ F1  (higher = worse)")
-    ax.set_title("H3: Split-MNIST forgetting under 3 retrain arms\n"
-                 f"n={len(per_seed[arms[0]])} seeds; box=IQR, dashed=mean")
+    ax.set_title(
+        "H3: Split-MNIST forgetting under 3 retrain arms\n"
+        f"n={len(per_seed[arms[0]])} seeds; box=IQR, dashed=mean"
+    )
     ax.grid(True, axis="y", alpha=0.3)
     _save(fig, "fig_h3_mnist_forget")
 

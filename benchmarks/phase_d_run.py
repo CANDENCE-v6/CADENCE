@@ -32,19 +32,19 @@ from pathlib import Path
 
 import mlflow
 import numpy as np
-from scipy import stats as sci_stats
-from sklearn.metrics import f1_score
-
 from benchmarks.baselines.harness import make_baseline_stream
 from benchmarks.synthetic_drift_gen import build_default_scenarios
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.disjoint import make_disjoint_split
+from cadence.data.loaders import load_credit_card_fraud
+from scipy import stats as sci_stats
+from sklearn.metrics import f1_score
+
 from cadence.common.config import load_config
 from cadence.common.device import log_device_info
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
-from cadence.data.disjoint import make_disjoint_split
-from cadence.data.loaders import load_credit_card_fraud
 from cadence.executor import ExecutorConfig, RetrainExecutor
 
 log = get_logger("cadence.benchmarks.phase_d")
@@ -76,8 +76,11 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--window-size", type=int, default=2048)
     p.add_argument("--n-windows", type=int, default=3)
     p.add_argument("--sla", type=float, default=0.65)
-    p.add_argument("--disjoint-criterion", default="high_amount",
-                   choices=["high_amount", "late_time", "class_positive"])
+    p.add_argument(
+        "--disjoint-criterion",
+        default="high_amount",
+        choices=["high_amount", "late_time", "class_positive"],
+    )
     p.add_argument("--finetune-epochs", type=int, default=3)
     p.add_argument("--fullretrain-epochs", type=int, default=8)
     p.add_argument("--target-layer", default="layer1")
@@ -284,16 +287,16 @@ def main(argv: list[str] | None = None) -> int:
         with open(args.out, "w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2, default=str)
         mlflow.log_artifact(args.out)
-        mlflow.log_metric(
-            "forgetting_partial_mean", summary["forgetting_partial"]["mean"]
-        )
+        mlflow.log_metric("forgetting_partial_mean", summary["forgetting_partial"]["mean"])
         mlflow.log_metric("forgetting_full_mean", summary["forgetting_full"]["mean"])
         if wilcoxon.get("p") is not None:
             mlflow.log_metric("wilcoxon_p_partial_less_full", wilcoxon["p"])
 
         print("\n=== Gate D: H3 forgetting on disjoint segment ===")
-        print(f"Disjoint criterion: {args.disjoint_criterion}  "
-              f"n={split.n_disjoint}  positive_rate={split.disjoint_positive_rate:.4f}")
+        print(
+            f"Disjoint criterion: {args.disjoint_criterion}  "
+            f"n={split.n_disjoint}  positive_rate={split.disjoint_positive_rate:.4f}"
+        )
         print(f"Baseline disjoint F1: {baseline_disjoint_f1:.4f}")
         print(
             f"Forgetting (partial): {summary['forgetting_partial']['mean']:+.4f} "

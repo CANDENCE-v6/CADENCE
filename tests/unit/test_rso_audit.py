@@ -10,11 +10,9 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-import torch
 
-from cadence.carbon.model import GridProfile, HardwareProfile, estimate_cost
+from cadence.carbon.model import estimate_cost
 from cadence.rso.env import RetrainingSandboxEnv, SandboxConfig
-
 
 # ---------- W-32: reward scaling ----------
 
@@ -49,7 +47,7 @@ class _StubAdapter:
     def partial_fit(self, X, y, **_):
         return None
 
-    def clone(self) -> "_StubAdapter":
+    def clone(self) -> _StubAdapter:
         return _StubAdapter(self._n_features, self._f1)
 
 
@@ -217,7 +215,8 @@ def test_phase_a_run_supports_per_seed_ppo_training() -> None:
     # from the loop index. We detect any of those via a substring check.
     has_per_seed = (
         "per_seed_policies" in src
-        or "for seed in range(args.seeds)" in src and "train_ppo" in src.split("for seed in range(args.seeds)")[1]
+        or "for seed in range(args.seeds)" in src
+        and "train_ppo" in src.split("for seed in range(args.seeds)")[1]
     )
     assert has_per_seed, (
         "W-36 regression: phase_a_run.main trains PPO once outside the seed "
@@ -251,9 +250,7 @@ def test_step_info_exposes_reward_components_for_stage1_gates() -> None:
         )
     # Round-trip: components sum (with signs) to reward.
     reconstructed = (
-        info["delta_f1_component"]
-        - info["cost_penalty_component"]
-        - info["sla_penalty_component"]
+        info["delta_f1_component"] - info["cost_penalty_component"] - info["sla_penalty_component"]
     )
     assert abs(reconstructed - reward) < 1e-6, (
         f"Stage-1 regression: reward components don't sum to reward "

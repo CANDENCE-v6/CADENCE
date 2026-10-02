@@ -61,14 +61,18 @@ def test_resume_skips_completed_and_picks_up_interrupted(
         "created": "2026-09-01T00:00:00+00:00",
         "stages": {
             "1": {
-                "params": {"seeds": 3, "train_timesteps": 100, "n_windows": 2,
-                           "window_size": 64, "sla": 0.65, "contested_only": True},
+                "params": {
+                    "seeds": 3,
+                    "train_timesteps": 100,
+                    "n_windows": 2,
+                    "window_size": 64,
+                    "sla": 0.65,
+                    "contested_only": True,
+                },
                 "started": "2026-09-01T00:00:00+00:00",
                 "seeds": [
-                    {"seed": 0, "status": "COMPLETED",
-                     "result_path": "dummy", "wall_seconds": 1.0},
-                    {"seed": 1, "status": "INTERRUPTED",
-                     "started": "2026-09-01T00:01:00+00:00"},
+                    {"seed": 0, "status": "COMPLETED", "result_path": "dummy", "wall_seconds": 1.0},
+                    {"seed": 1, "status": "INTERRUPTED", "started": "2026-09-01T00:01:00+00:00"},
                     {"seed": 2, "status": "NOT_STARTED"},
                 ],
             }
@@ -86,9 +90,17 @@ def test_resume_skips_completed_and_picks_up_interrupted(
         out_dir.mkdir(exist_ok=True)
         out_path = out_dir / f"seed_{seed}.json"
         out_path.write_text(
-            json.dumps({"scenarios": {"scen_a": {"aggregates": {
-                "rso_ppo": {"mean_f1": [0.7, 0.01], "gpu_hr": [0.001, 0.0001]}
-            }}}})
+            json.dumps(
+                {
+                    "scenarios": {
+                        "scen_a": {
+                            "aggregates": {
+                                "rso_ppo": {"mean_f1": [0.7, 0.01], "gpu_hr": [0.001, 0.0001]}
+                            }
+                        }
+                    }
+                }
+            )
         )
         return 0, out_path, 0.1
 

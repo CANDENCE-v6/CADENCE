@@ -690,7 +690,7 @@ The most-responsible node points to a specific layer (e.g., Layer 1), because ea
 **Step 2 — Freeze everything except the target layer.**
 ```python
 for name, param in fraudnet.named_parameters():
-    if "layer1" not in name:      # target layer identified in Step 1
+    if "layer1" not in name:  # target layer identified in Step 1
         param.requires_grad = False
     else:
         param.requires_grad = True
@@ -699,14 +699,14 @@ for name, param in fraudnet.named_parameters():
 **Step 3 — Compute EWC importance weights (Fisher information) for the target layer, using the *original* training data (or a cached sample of it), before the fine-tune starts.**
 ```python
 fisher = {}
-for x, y in original_training_sample:      # small representative sample
+for x, y in original_training_sample:  # small representative sample
     fraudnet.zero_grad()
     output = fraudnet(x)
     loss = bce_loss(output, y)
     loss.backward()
     for name, param in fraudnet.named_parameters():
         if "layer1" in name:
-            fisher[name] = fisher.get(name, 0) + param.grad.data ** 2
+            fisher[name] = fisher.get(name, 0) + param.grad.data**2
 for name in fisher:
     fisher[name] /= len(original_training_sample)
 ```
@@ -732,7 +732,7 @@ for epoch in range(num_finetune_epochs):
 
         total_loss = task_loss + lambda_ewc * ewc_penalty
         total_loss.backward()
-        optimizer.step()   # only updates the target layer (requires_grad=False elsewhere)
+        optimizer.step()  # only updates the target layer (requires_grad=False elsewhere)
 ```
 `theta_star[name]` is the target layer's weight snapshot taken right before fine-tuning began (Step 2). The EWC penalty is a tug-of-war between fitting the new data (`task_loss`) and not drifting far from prior behavior, especially on important weights (`ewc_penalty`).
 
@@ -742,10 +742,10 @@ for epoch in range(num_finetune_epochs):
 
 ```python
 for param in fraudnet.parameters():
-    param.requires_grad = True   # nothing frozen
+    param.requires_grad = True  # nothing frozen
 
 training_data = full_historical_dataset + all_new_labeled_production_data
-optimizer = Adam(fraudnet.parameters(), lr=1e-3)   # optionally warm-start from current weights
+optimizer = Adam(fraudnet.parameters(), lr=1e-3)  # optionally warm-start from current weights
 
 for epoch in range(num_epochs):
     for x, y in training_data:

@@ -49,20 +49,22 @@ def main(argv=None) -> int:
         for _ in range(args.reps):
             t0 = time.perf_counter()
             build_cdag_from_windows(
-                sig, pc_alpha=0.05, notears_lambda=0.05,
-                notears_max_iter=args.notears_max_iter)
+                sig, pc_alpha=0.05, notears_lambda=0.05, notears_max_iter=args.notears_max_iter
+            )
             times.append(time.perf_counter() - t0)
 
         tracemalloc.start()
-        build_cdag_from_windows(sig, pc_alpha=0.05, notears_lambda=0.05,
-                                notears_max_iter=args.notears_max_iter)
+        build_cdag_from_windows(
+            sig, pc_alpha=0.05, notears_lambda=0.05, notears_max_iter=args.notears_max_iter
+        )
         _, peak = tracemalloc.get_traced_memory()
         tracemalloc.stop()
 
         med = float(np.median(times))
-        rows.append({"n_nodes": n_nodes, "median_s": med,
-                     "peak_mem_mb": peak / 1024**2})
-        print(f"n_nodes={n_nodes:>5}  median={med*1e3:8.1f} ms  peak_mem={peak/1024**2:7.1f} MB")
+        rows.append({"n_nodes": n_nodes, "median_s": med, "peak_mem_mb": peak / 1024**2})
+        print(
+            f"n_nodes={n_nodes:>5}  median={med * 1e3:8.1f} ms  peak_mem={peak / 1024**2:7.1f} MB"
+        )
         log.info("e5_point", n_nodes=n_nodes, median_s=med, peak_mem_mb=peak / 1024**2)
 
     # Rough empirical scaling exponent from the two extremes (log-log slope).
@@ -73,9 +75,14 @@ def main(argv=None) -> int:
     else:
         exponent = float("nan")
 
-    summary = {"experiment": "E5_graph_scaling", "n_windows": args.n_windows,
-               "notears_max_iter": args.notears_max_iter, "rows": rows,
-               "empirical_scaling_exponent": exponent, "config": vars(args)}
+    summary = {
+        "experiment": "E5_graph_scaling",
+        "n_windows": args.n_windows,
+        "notears_max_iter": args.notears_max_iter,
+        "rows": rows,
+        "empirical_scaling_exponent": exponent,
+        "config": vars(args),
+    }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, default=str)

@@ -25,7 +25,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.data import Data
 
-from cadence.attribution.gnn import CDAGSage, GNNConfig, build_model_on_device
+from cadence.attribution.gnn import CDAGSage
 from cadence.attribution.sandbox_labels import InterventionSample
 from cadence.common.device import (
     assert_on_gpu,

@@ -36,25 +36,29 @@ R_HEADER = re.compile(
 
 def _extract_sections(text: str) -> list[dict]:
     """Split results.md into per-entry blocks and pull out interesting fields."""
-    positions = [(m.start(), m.group(1).strip(), m.group(2).strip(), m.group(3).strip())
-                 for m in R_HEADER.finditer(text)]
+    positions = [
+        (m.start(), m.group(1).strip(), m.group(2).strip(), m.group(3).strip())
+        for m in R_HEADER.finditer(text)
+    ]
     positions.append((len(text), "END", "", ""))
     entries: list[dict] = []
     for i in range(len(positions) - 1):
         start, tag, title, date = positions[i]
         end, _, _, _ = positions[i + 1]
         body = text[start:end]
-        entries.append({
-            "tag": tag,
-            "title": title,
-            "date": date,
-            "body": body,
-            "setup": _first_bullet(body, "Setup:"),
-            "interpretation": _first_bullet(body, "Interpretation"),
-            "wilcoxon_p": _extract_p_value(body),
-            "tables": _extract_tables(body),
-            "artifacts": _extract_artifacts(body),
-        })
+        entries.append(
+            {
+                "tag": tag,
+                "title": title,
+                "date": date,
+                "body": body,
+                "setup": _first_bullet(body, "Setup:"),
+                "interpretation": _first_bullet(body, "Interpretation"),
+                "wilcoxon_p": _extract_p_value(body),
+                "tables": _extract_tables(body),
+                "artifacts": _extract_artifacts(body),
+            }
+        )
     return entries
 
 
@@ -144,7 +148,6 @@ def _render(entries: list[dict], src_path: Path, dst: Path = DEFAULT_OUT) -> str
     lines.append("## Result tables (one section per R-entry)")
     lines.append("")
     for e in entries:
-        anchor_tag = e["tag"].lower().replace(".", "-")
         lines.append(f"### R-{e['tag']}: {e['title']}")
         lines.append(f"*Recorded: {e['date']}*")
         lines.append("")
@@ -153,7 +156,9 @@ def _render(entries: list[dict], src_path: Path, dst: Path = DEFAULT_OUT) -> str
             lines.append("")
         if e["wilcoxon_p"] is not None:
             marker = "PASS" if e["wilcoxon_p"] < 0.05 else "borderline / negative"
-            lines.append(f"**Statistical test.** paired Wilcoxon p ≈ {e['wilcoxon_p']:.4g} → {marker} at α=0.05")
+            lines.append(
+                f"**Statistical test.** paired Wilcoxon p ≈ {e['wilcoxon_p']:.4g} → {marker} at α=0.05"
+            )
             lines.append("")
         if e["tables"]:
             for tbl in e["tables"]:
@@ -183,11 +188,12 @@ def _render(entries: list[dict], src_path: Path, dst: Path = DEFAULT_OUT) -> str
         fig_name = fig_map.get(f"R-{e['tag']}")
         fig_path = ROOT / "docs" / "paper" / "figures" / fig_name if fig_name else None
         if fig_path and fig_path.exists():
-            rel = fig_path.relative_to(ROOT).as_posix()
             lines.append(f"![{e['tag']}]({fig_path.relative_to(dst.parent).as_posix()})")
             lines.append("")
         else:
-            lines.append("**Figure placeholder.** _TODO: insert plot referencing this entry's `experiments/*.json` artifact._")
+            lines.append(
+                "**Figure placeholder.** _TODO: insert plot referencing this entry's `experiments/*.json` artifact._"
+            )
             lines.append("")
         lines.append("---")
         lines.append("")
@@ -209,7 +215,9 @@ def main() -> int:
     md = _render(entries, src, dst)
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text(md, encoding="utf-8")
-    print(f"wrote {dst.relative_to(ROOT)}  ({len(entries)} R-entries, {sum(len(e['tables']) for e in entries)} tables)")
+    print(
+        f"wrote {dst.relative_to(ROOT)}  ({len(entries)} R-entries, {sum(len(e['tables']) for e in entries)} tables)"
+    )
     return 0
 
 

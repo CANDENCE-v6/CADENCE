@@ -28,9 +28,13 @@ def _default_of(source: str, class_name: str, field_name: str) -> object:
     for node in ast.walk(tree):
         if isinstance(node, ast.ClassDef) and node.name == class_name:
             for stmt in node.body:
-                if isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name):
-                    if stmt.target.id == field_name and stmt.value is not None:
-                        return ast.literal_eval(stmt.value)
+                if (
+                    isinstance(stmt, ast.AnnAssign)
+                    and isinstance(stmt.target, ast.Name)
+                    and stmt.target.id == field_name
+                    and stmt.value is not None
+                ):
+                    return ast.literal_eval(stmt.value)
     raise AssertionError(f"{class_name}.{field_name} not found")
 
 
@@ -83,8 +87,11 @@ def test_lagrangian_dynamics_reach_equilibrium_under_measured_violations() -> No
         for _ in range(n):
             v = 0.0 if rng.random() < 0.14 else 0.15
             ema = cfg.ema_beta * ema + (1 - cfg.ema_beta) * v
-            lam = float(np.clip(lam + cfg.dual_lr * (ema - target_violation),
-                                cfg.lambda_min, cfg.lambda_max))
+            lam = float(
+                np.clip(
+                    lam + cfg.dual_lr * (ema - target_violation), cfg.lambda_min, cfg.lambda_max
+                )
+            )
         return lam
 
     lam_fixed = simulate(cfg.target_violation)

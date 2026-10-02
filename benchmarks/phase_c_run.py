@@ -39,10 +39,11 @@ from pathlib import Path
 import mlflow
 import numpy as np
 import torch
-
 from benchmarks.baselines.harness import make_baseline_stream
 from benchmarks.synthetic_drift_gen import build_default_scenarios
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.loaders import load_credit_card_fraud
+
 from cadence.attribution import (
     GNNConfig,
     GNNResponsibilityScorer,
@@ -58,7 +59,6 @@ from cadence.common.device import cuda_memory_snapshot, get_device, log_device_i
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
-from cadence.data.loaders import load_credit_card_fraud
 from cadence.rso.env import RetrainingSandboxEnv, SandboxConfig
 
 log = get_logger("cadence.benchmarks.phase_c")
@@ -215,9 +215,7 @@ def main(argv: list[str] | None = None) -> int:
         eval_scenario = next(
             s for s in build_default_scenarios(ds.feature_names) if s.name == args.eval_scenario
         )
-        stream_X, stream_y, _ = make_baseline_stream(
-            X_stream, y_stream, eval_scenario, seed=0
-        )
+        stream_X, stream_y, _ = make_baseline_stream(X_stream, y_stream, eval_scenario, seed=0)
 
         adapter.load_state_dict(baseline_state)
         adapter.decision_threshold = baseline_threshold
@@ -329,7 +327,9 @@ def main(argv: list[str] | None = None) -> int:
                         _, emb = scorer.model(data)
                         node_idx = scorer.node_set.feature_indices[top_feat]
                         ctx = torch.tensor([[pre_f1, 1.0]], dtype=torch.float32, device=dev)
-                        predicted_post = float(scorer.surrogate(emb[node_idx : node_idx + 1], ctx).item())
+                        predicted_post = float(
+                            scorer.surrogate(emb[node_idx : node_idx + 1], ctx).item()
+                        )
             else:
                 top_feat = -1
                 predicted_post = None

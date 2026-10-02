@@ -37,12 +37,13 @@ from pathlib import Path
 import mlflow
 import numpy as np
 import torch
-from scipy import stats as sci_stats
-from sklearn.metrics import f1_score, roc_auc_score
-
 from benchmarks.baselines.harness import make_baseline_stream
 from benchmarks.synthetic_drift_gen import build_default_scenarios
 from cadence.adapters.neural import FraudNet, FraudNetConfig
+from cadence.data.loaders import load_credit_card_fraud
+from scipy import stats as sci_stats
+from sklearn.metrics import f1_score, roc_auc_score
+
 from cadence.attribution import (
     CDAGResponsibilityScorer,
     GNNConfig,
@@ -58,7 +59,6 @@ from cadence.common.device import get_device
 from cadence.common.logging import get_logger
 from cadence.common.seeds import set_global_seed
 from cadence.common.tracking import start_run
-from cadence.data.loaders import load_credit_card_fraud
 from cadence.rso.scorers import PSIResponsibilityScorer
 
 log = get_logger("cadence.benchmarks.phase_b")
@@ -331,9 +331,7 @@ def main(argv: list[str] | None = None) -> int:
                         "shd_proxy": shd,
                         "gt_idx": gt_idx,
                         "cdag_edges": cdag_edges,
-                        "node_labels": [
-                            spec.name for spec in gnn_scorer.node_set.specs
-                        ],
+                        "node_labels": [spec.name for spec in gnn_scorer.node_set.specs],
                         "feature_indices": list(gnn_scorer.node_set.feature_indices),
                         "performance_index": int(gnn_scorer.node_set.performance_index),
                         "per_scorer_feature_scores": {
@@ -414,10 +412,14 @@ def main(argv: list[str] | None = None) -> int:
                 a_vals, b_vals = [], []
                 for scen, seed in keys:
                     ax = next(
-                        x for x in rows if x["scorer"] == a and x["scenario"] == scen and x["seed"] == seed
+                        x
+                        for x in rows
+                        if x["scorer"] == a and x["scenario"] == scen and x["seed"] == seed
                     )
                     bx = next(
-                        x for x in rows if x["scorer"] == b and x["scenario"] == scen and x["seed"] == seed
+                        x
+                        for x in rows
+                        if x["scorer"] == b and x["scenario"] == scen and x["seed"] == seed
                     )
                     if metric == "auroc" and (np.isnan(ax[metric]) or np.isnan(bx[metric])):
                         continue
@@ -455,7 +457,9 @@ def main(argv: list[str] | None = None) -> int:
                 f"{a['mean_reciprocal_rank'][0]:>10.4f} +/- {a['mean_reciprocal_rank'][1]:.4f}"
                 f"{a['auroc'][0]:>10.4f} +/- {a['auroc'][1]:.4f}"
             )
-        print(f"\nSHD proxy (learned CDAG vs ground truth): {summary['shd_proxy_mean']:.3f} +/- {summary['shd_proxy_std']:.3f}")
+        print(
+            f"\nSHD proxy (learned CDAG vs ground truth): {summary['shd_proxy_mean']:.3f} +/- {summary['shd_proxy_std']:.3f}"
+        )
         print(f"GNN final val acc: {train_summary['final_val_acc']:.4f}")
         if "max_vram_mb" in train_summary:
             print(f"GNN peak VRAM (train): {train_summary['max_vram_mb']:.2f} MB")
